@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/talon-cli/talon/internal/paths"
+	"github.com/CRISTOP-bot/talon/internal/paths"
 )
 
 func withTempHome(t *testing.T) string {

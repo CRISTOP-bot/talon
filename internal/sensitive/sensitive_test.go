@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/talon-cli/talon/internal/secrets"
+	"github.com/CRISTOP-bot/talon/internal/secrets"
 )
 
 func TestSensitivePathsAreBlockedByDefault(t *testing.T) {

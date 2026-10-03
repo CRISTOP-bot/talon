@@ -11,11 +11,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/talon-cli/talon/internal/config"
-	"github.com/talon-cli/talon/internal/llm"
-	"github.com/talon-cli/talon/internal/logger"
-	"github.com/talon-cli/talon/internal/paths"
-	"github.com/talon-cli/talon/internal/repl"
+	"github.com/CRISTOP-bot/talon/internal/config"
+	"github.com/CRISTOP-bot/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/logger"
+	"github.com/CRISTOP-bot/talon/internal/paths"
+	"github.com/CRISTOP-bot/talon/internal/repl"
 )
 
 // newProject writes a small Go project in a temp dir and returns its path.

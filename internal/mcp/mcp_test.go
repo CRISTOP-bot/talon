@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/talon-cli/talon/internal/logger"
-	"github.com/talon-cli/talon/internal/perm"
+	"github.com/CRISTOP-bot/talon/internal/logger"
+	"github.com/CRISTOP-bot/talon/internal/perm"
 )
 
 // fakeServerSource is a minimal MCP server: it answers initialize, tools/list

@@ -27,7 +27,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/talon-cli/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/errs"
 )
 
 //go:embed assets/terms/*.md assets/privacy/*.md

@@ -23,14 +23,14 @@ func newTestServer(t *testing.T, version string, body []byte) *httptest.Server {
 	// once the server address is known.
 	mux := http.NewServeMux()
 	var base string
-	mux.HandleFunc("/repos/talon-cli/talon/releases/latest", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/repos/CRISTOP-bot/talon/releases/latest", func(w http.ResponseWriter, r *http.Request) {
 		rel := Release{TagName: "v" + version, Name: "Talon " + version, Assets: []Asset{
 			{Name: fakeAsset, URL: base + "/" + fakeAsset},
 			{Name: "checksums.txt", URL: base + "/checksums.txt"},
 		}}
 		json.NewEncoder(w).Encode(rel)
 	})
-	mux.HandleFunc("/repos/talon-cli/talon/releases/tags/v9.9.9", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/repos/CRISTOP-bot/talon/releases/tags/v9.9.9", func(w http.ResponseWriter, r *http.Request) {
 		rel := Release{TagName: "v9.9.9", Assets: []Asset{{Name: fakeAsset, URL: base + "/" + fakeAsset}}}
 		json.NewEncoder(w).Encode(rel)
 	})
@@ -49,7 +49,7 @@ func newTestServer(t *testing.T, version string, body []byte) *httptest.Server {
 
 func TestLatestParsesRelease(t *testing.T) {
 	srv := newTestServer(t, "1.2.0", []byte("data"))
-	u := &Updater{Repo: "talon-cli/talon", APIBase: srv.URL, HTTP: srv.Client()}
+	u := &Updater{Repo: "CRISTOP-bot/talon", APIBase: srv.URL, HTTP: srv.Client()}
 	rel, err := u.Latest(context.Background())
 	if err != nil {
 		t.Fatal(err)
@@ -74,7 +74,7 @@ func TestLatestHandlesMissingReleases(t *testing.T) {
 		w.WriteHeader(http.StatusNotFound)
 	}))
 	defer srv.Close()
-	u := &Updater{Repo: "talon-cli/talon", APIBase: srv.URL, HTTP: srv.Client()}
+	u := &Updater{Repo: "CRISTOP-bot/talon", APIBase: srv.URL, HTTP: srv.Client()}
 	if _, err := u.Latest(context.Background()); err == nil {
 		t.Fatal("expected an error")
 	}
@@ -83,7 +83,7 @@ func TestLatestHandlesMissingReleases(t *testing.T) {
 func TestDownloadAndVerify(t *testing.T) {
 	body := []byte("binary-content")
 	srv := newTestServer(t, "2.0.0", body)
-	u := &Updater{Repo: "talon-cli/talon", APIBase: srv.URL, HTTP: srv.Client()}
+	u := &Updater{Repo: "CRISTOP-bot/talon", APIBase: srv.URL, HTTP: srv.Client()}
 	rel, err := u.Latest(context.Background())
 	if err != nil {
 		t.Fatal(err)

@@ -34,9 +34,9 @@ jobs:
             out="dist/talon-${version}-${os}-${arch}"
             [ "$os" = "windows" ] && out="${out}.exe"
             CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -trimpath \
-              -ldflags "-s -w -X github.com/talon-cli/talon/internal/app.Version=${version} \
-                        -X github.com/talon-cli/talon/internal/app.Commit=${GITHUB_SHA} \
-                        -X github.com/talon-cli/talon/internal/app.Date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+              -ldflags "-s -w -X github.com/CRISTOP-bot/talon/internal/app.Version=${version} \
+                        -X github.com/CRISTOP-bot/talon/internal/app.Commit=${GITHUB_SHA} \
+                        -X github.com/CRISTOP-bot/talon/internal/app.Date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
               -o "$out" ./cmd/talon
           done
 
@@ -65,4 +65,4 @@ jobs:
             refuses to install a binary without a published checksum.
 
             Install:
-              curl -fsSL https://raw.githubusercontent.com/talon-cli/talon/main/install.sh | sh
+              curl -fsSL https://raw.githubusercontent.com/CRISTOP-bot/talon/main/install.sh | sh

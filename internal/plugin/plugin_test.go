@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/talon-cli/talon/internal/logger"
-	"github.com/talon-cli/talon/internal/perm"
-	"github.com/talon-cli/talon/internal/tools"
+	"github.com/CRISTOP-bot/talon/internal/logger"
+	"github.com/CRISTOP-bot/talon/internal/perm"
+	"github.com/CRISTOP-bot/talon/internal/tools"
 )
 
 // fakePlugin is a Go program compiled on the fly that speaks the plugin

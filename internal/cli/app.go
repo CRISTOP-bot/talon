@@ -13,8 +13,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/app"
-	"github.com/talon-cli/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/app"
+	"github.com/CRISTOP-bot/talon/internal/errs"
 )
 
 // Command is a single CLI verb.

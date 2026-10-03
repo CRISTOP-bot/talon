@@ -3,7 +3,7 @@ Version:        %{_version}
 Release:        1%{?dist}
 Summary:        Agentic coding CLI for the terminal
 License:        MIT
-URL:            https://github.com/talon-cli/talon
+URL:            https://github.com/CRISTOP-bot/talon
 BuildArch:      x86_64
 
 %description
@@ -22,5 +22,5 @@ cp %{_sourcedir}/talon %{buildroot}%{_bindir}/talon
 %{_bindir}/talon
 
 %changelog
-* Mon Jan 01 2026 Talon contributors <maintainers@talon.dev> - %{_version}-1
+* Mon Jan 01 2026 CRISTOP-bot <borjascristopher88@gmail.com> - %{_version}-1
 - Automated build; see CHANGELOG.md

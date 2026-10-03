@@ -19,15 +19,15 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/audit"
-	"github.com/talon-cli/talon/internal/config"
-	"github.com/talon-cli/talon/internal/logger"
-	"github.com/talon-cli/talon/internal/netguard"
-	"github.com/talon-cli/talon/internal/paths"
-	"github.com/talon-cli/talon/internal/privacy"
-	"github.com/talon-cli/talon/internal/sandbox"
-	"github.com/talon-cli/talon/internal/secrets"
-	"github.com/talon-cli/talon/internal/sensitive"
+	"github.com/CRISTOP-bot/talon/internal/audit"
+	"github.com/CRISTOP-bot/talon/internal/config"
+	"github.com/CRISTOP-bot/talon/internal/logger"
+	"github.com/CRISTOP-bot/talon/internal/netguard"
+	"github.com/CRISTOP-bot/talon/internal/paths"
+	"github.com/CRISTOP-bot/talon/internal/privacy"
+	"github.com/CRISTOP-bot/talon/internal/sandbox"
+	"github.com/CRISTOP-bot/talon/internal/secrets"
+	"github.com/CRISTOP-bot/talon/internal/sensitive"
 )
 
 // Posture is the assembled security configuration for one run.

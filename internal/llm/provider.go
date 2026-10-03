@@ -12,8 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/talon-cli/talon/internal/app"
-	"github.com/talon-cli/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/app"
+	"github.com/CRISTOP-bot/talon/internal/errs"
 )
 
 // Provider is the interface every model backend implements.

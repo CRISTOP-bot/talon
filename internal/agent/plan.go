@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/llm"
 )
 
 // PlanStep is one numbered step of a plan.

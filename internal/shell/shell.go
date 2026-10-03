@@ -14,11 +14,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/talon-cli/talon/internal/audit"
-	"github.com/talon-cli/talon/internal/errs"
-	"github.com/talon-cli/talon/internal/injection"
-	"github.com/talon-cli/talon/internal/sandbox"
-	"github.com/talon-cli/talon/internal/secrets"
+	"github.com/CRISTOP-bot/talon/internal/audit"
+	"github.com/CRISTOP-bot/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/injection"
+	"github.com/CRISTOP-bot/talon/internal/sandbox"
+	"github.com/CRISTOP-bot/talon/internal/secrets"
 )
 
 // SandboxPolicy is the confinement applied to a command. It is an alias so

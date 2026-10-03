@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/diff"
+	"github.com/CRISTOP-bot/talon/internal/diff"
 )
 
 // RenderDiff writes a coloured unified diff, grouped by file when a path is

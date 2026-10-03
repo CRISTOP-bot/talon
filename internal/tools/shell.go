@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/talon-cli/talon/internal/llm"
-	"github.com/talon-cli/talon/internal/perm"
-	"github.com/talon-cli/talon/internal/shell"
+	"github.com/CRISTOP-bot/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/perm"
+	"github.com/CRISTOP-bot/talon/internal/shell"
 )
 
 // ShellDefinitions returns the command execution tools.

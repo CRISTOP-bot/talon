@@ -9,15 +9,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/talon-cli/talon/internal/git"
-	"github.com/talon-cli/talon/internal/index"
-	"github.com/talon-cli/talon/internal/journal"
-	"github.com/talon-cli/talon/internal/llm"
-	"github.com/talon-cli/talon/internal/logger"
-	"github.com/talon-cli/talon/internal/perm"
-	"github.com/talon-cli/talon/internal/project"
-	"github.com/talon-cli/talon/internal/shell"
-	"github.com/talon-cli/talon/internal/tools"
+	"github.com/CRISTOP-bot/talon/internal/git"
+	"github.com/CRISTOP-bot/talon/internal/index"
+	"github.com/CRISTOP-bot/talon/internal/journal"
+	"github.com/CRISTOP-bot/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/logger"
+	"github.com/CRISTOP-bot/talon/internal/perm"
+	"github.com/CRISTOP-bot/talon/internal/project"
+	"github.com/CRISTOP-bot/talon/internal/shell"
+	"github.com/CRISTOP-bot/talon/internal/tools"
 )
 
 // stubApprover records approval requests and answers from a script.

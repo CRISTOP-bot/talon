@@ -17,9 +17,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/errs"
-	"github.com/talon-cli/talon/internal/paths"
-	"github.com/talon-cli/talon/internal/toml"
+	"github.com/CRISTOP-bot/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/paths"
+	"github.com/CRISTOP-bot/talon/internal/toml"
 )
 
 // Permission levels, ordered from most to least restricted.
@@ -294,7 +294,7 @@ func Defaults() *Config {
 }
 
 // appRepo is the repository used by `talon update` and `talon plugins install`.
-const appRepo = "talon-cli/talon"
+const appRepo = "CRISTOP-bot/talon"
 
 // defaultDenyCommands is the baseline blocklist. It is intentionally small:
 // the permission engine is conservative for anything not on the allow list.

@@ -10,13 +10,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/talon-cli/talon/internal/cli"
-	"github.com/talon-cli/talon/internal/config"
-	"github.com/talon-cli/talon/internal/errs"
-	"github.com/talon-cli/talon/internal/logger"
-	"github.com/talon-cli/talon/internal/paths"
-	"github.com/talon-cli/talon/internal/plugin"
-	"github.com/talon-cli/talon/internal/ui"
+	"github.com/CRISTOP-bot/talon/internal/cli"
+	"github.com/CRISTOP-bot/talon/internal/config"
+	"github.com/CRISTOP-bot/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/logger"
+	"github.com/CRISTOP-bot/talon/internal/paths"
+	"github.com/CRISTOP-bot/talon/internal/plugin"
+	"github.com/CRISTOP-bot/talon/internal/ui"
 )
 
 const pluginsHelp = `

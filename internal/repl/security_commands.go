@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/audit"
-	"github.com/talon-cli/talon/internal/errs"
-	"github.com/talon-cli/talon/internal/legal"
-	"github.com/talon-cli/talon/internal/privacy"
-	"github.com/talon-cli/talon/internal/sandbox"
+	"github.com/CRISTOP-bot/talon/internal/audit"
+	"github.com/CRISTOP-bot/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/legal"
+	"github.com/CRISTOP-bot/talon/internal/privacy"
+	"github.com/CRISTOP-bot/talon/internal/sandbox"
 )
 
 // cmdSecurity reports the controls in force. It reads state only: changing the

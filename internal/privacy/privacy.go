@@ -13,7 +13,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/paths"
+	"github.com/CRISTOP-bot/talon/internal/paths"
 )
 
 // Mode describes an active privacy configuration.

@@ -9,11 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/talon-cli/talon/internal/diff"
-	"github.com/talon-cli/talon/internal/index"
-	"github.com/talon-cli/talon/internal/journal"
-	"github.com/talon-cli/talon/internal/llm"
-	"github.com/talon-cli/talon/internal/perm"
+	"github.com/CRISTOP-bot/talon/internal/diff"
+	"github.com/CRISTOP-bot/talon/internal/index"
+	"github.com/CRISTOP-bot/talon/internal/journal"
+	"github.com/CRISTOP-bot/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/perm"
 )
 
 // FSDefinitions returns the filesystem tools.

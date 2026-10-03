@@ -6,14 +6,14 @@ import (
 	"os"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/audit"
-	"github.com/talon-cli/talon/internal/cli"
-	"github.com/talon-cli/talon/internal/errs"
-	"github.com/talon-cli/talon/internal/legal"
-	"github.com/talon-cli/talon/internal/paths"
-	"github.com/talon-cli/talon/internal/privacy"
-	"github.com/talon-cli/talon/internal/sandbox"
-	"github.com/talon-cli/talon/internal/secure"
+	"github.com/CRISTOP-bot/talon/internal/audit"
+	"github.com/CRISTOP-bot/talon/internal/cli"
+	"github.com/CRISTOP-bot/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/legal"
+	"github.com/CRISTOP-bot/talon/internal/paths"
+	"github.com/CRISTOP-bot/talon/internal/privacy"
+	"github.com/CRISTOP-bot/talon/internal/sandbox"
+	"github.com/CRISTOP-bot/talon/internal/secure"
 )
 
 const termsHelp = `

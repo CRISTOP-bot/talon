@@ -12,15 +12,15 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/talon-cli/talon/internal/term"
-	"github.com/talon-cli/talon/internal/ui"
+	"github.com/CRISTOP-bot/talon/internal/term"
+	"github.com/CRISTOP-bot/talon/internal/ui"
 
-	"github.com/talon-cli/talon/internal/agent"
-	"github.com/talon-cli/talon/internal/cli"
-	"github.com/talon-cli/talon/internal/config"
-	"github.com/talon-cli/talon/internal/errs"
-	"github.com/talon-cli/talon/internal/logger"
-	"github.com/talon-cli/talon/internal/repl"
+	"github.com/CRISTOP-bot/talon/internal/agent"
+	"github.com/CRISTOP-bot/talon/internal/cli"
+	"github.com/CRISTOP-bot/talon/internal/config"
+	"github.com/CRISTOP-bot/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/logger"
+	"github.com/CRISTOP-bot/talon/internal/repl"
 )
 
 // sessionFlags are the flags accepted in front of a prompt.

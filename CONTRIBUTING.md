@@ -5,7 +5,7 @@ Thanks for helping. This document covers how to build, test and land a change.
 ## Getting set up
 
 ```bash
-git clone https://github.com/talon-cli/talon
+git clone https://github.com/CRISTOP-bot/talon
 cd talon
 make build
 make test

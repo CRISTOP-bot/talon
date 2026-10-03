@@ -18,7 +18,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/secrets"
+	"github.com/CRISTOP-bot/talon/internal/secrets"
 )
 
 // Action is what to do with sensitive content.

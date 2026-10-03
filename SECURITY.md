@@ -9,8 +9,8 @@ is worse than none.
 
 Report privately rather than opening a public issue:
 
-- GitHub Security Advisories: `https://github.com/talon-cli/talon/security/advisories/new`
-- Email: `security@talon.dev`
+- GitHub Security Advisories: `https://github.com/CRISTOP-bot/talon/security/advisories/new`
+- Email: `borjascristopher88@gmail.com` (private report, no public issues)
 
 Include the version, your OS and architecture, and a minimal reproduction. We
 aim to acknowledge a report within 72 hours and to ship a fix or a mitigation

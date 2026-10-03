@@ -8,10 +8,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/diff"
-	"github.com/talon-cli/talon/internal/llm"
-	"github.com/talon-cli/talon/internal/perm"
-	"github.com/talon-cli/talon/internal/project"
+	"github.com/CRISTOP-bot/talon/internal/diff"
+	"github.com/CRISTOP-bot/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/perm"
+	"github.com/CRISTOP-bot/talon/internal/project"
 )
 
 // ProjectDefinitions returns the project-level tools.

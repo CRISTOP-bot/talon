@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/talon-cli/talon/internal/cli"
-	"github.com/talon-cli/talon/internal/paths"
+	"github.com/CRISTOP-bot/talon/internal/cli"
+	"github.com/CRISTOP-bot/talon/internal/paths"
 )
 
 // newTestApp wires the real command set against temporary directories. The

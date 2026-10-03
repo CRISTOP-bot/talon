@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/talon-cli/talon/internal/audit"
-	"github.com/talon-cli/talon/internal/sandbox"
-	"github.com/talon-cli/talon/internal/secrets"
+	"github.com/CRISTOP-bot/talon/internal/audit"
+	"github.com/CRISTOP-bot/talon/internal/sandbox"
+	"github.com/CRISTOP-bot/talon/internal/secrets"
 )
 
 func newRunner(t *testing.T, dir string) *Runner {

@@ -11,7 +11,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/git"
+	"github.com/CRISTOP-bot/talon/internal/git"
 )
 
 // Language is a detected programming language.

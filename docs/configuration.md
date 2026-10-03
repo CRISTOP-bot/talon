@@ -159,7 +159,7 @@ subject to the normal permission policy.
 
 | Key | Default | Meaning |
 |---|---|---|
-| `update.repo` | `talon-cli/talon` | release repository |
+| `update.repo` | `CRISTOP-bot/talon` | release repository |
 | `update.channel` | `stable` | informational; `talon update --version <tag>` selects explicitly |
 | `update.check_on_start` | `false` | reserved for future opt-in checks |
 

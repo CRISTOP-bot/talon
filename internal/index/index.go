@@ -14,7 +14,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/talon-cli/talon/internal/project"
+	"github.com/CRISTOP-bot/talon/internal/project"
 )
 
 // Entry describes one indexed file.

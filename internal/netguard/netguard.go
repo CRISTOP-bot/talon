@@ -17,8 +17,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/talon-cli/talon/internal/errs"
-	"github.com/talon-cli/talon/internal/secrets"
+	"github.com/CRISTOP-bot/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/secrets"
 )
 
 // Mode controls how strictly destinations are checked.

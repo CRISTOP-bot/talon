@@ -12,9 +12,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/talon-cli/talon/internal/errs"
-	"github.com/talon-cli/talon/internal/llm"
-	"github.com/talon-cli/talon/internal/paths"
+	"github.com/CRISTOP-bot/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/paths"
 )
 
 // Entry is one recorded message.

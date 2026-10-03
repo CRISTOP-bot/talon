@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/talon-cli/talon/internal/app"
-	"github.com/talon-cli/talon/internal/cli"
+	"github.com/CRISTOP-bot/talon/internal/app"
+	"github.com/CRISTOP-bot/talon/internal/cli"
 )
 
 // versionCommand prints build metadata.

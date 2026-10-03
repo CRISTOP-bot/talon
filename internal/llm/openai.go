@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/errs"
 )
 
 // OpenAI implements the /chat/completions protocol, which is also spoken by

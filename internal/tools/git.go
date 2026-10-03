@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/git"
-	"github.com/talon-cli/talon/internal/llm"
-	"github.com/talon-cli/talon/internal/perm"
+	"github.com/CRISTOP-bot/talon/internal/git"
+	"github.com/CRISTOP-bot/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/perm"
 )
 
 // GitDefinitions returns the git tools.

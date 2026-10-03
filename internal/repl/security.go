@@ -6,16 +6,16 @@ import (
 	"os"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/audit"
-	"github.com/talon-cli/talon/internal/injection"
-	"github.com/talon-cli/talon/internal/legal"
-	"github.com/talon-cli/talon/internal/llm"
-	"github.com/talon-cli/talon/internal/perm"
-	"github.com/talon-cli/talon/internal/privacy"
-	"github.com/talon-cli/talon/internal/secrets"
-	"github.com/talon-cli/talon/internal/secure"
-	"github.com/talon-cli/talon/internal/shell"
-	"github.com/talon-cli/talon/internal/tools"
+	"github.com/CRISTOP-bot/talon/internal/audit"
+	"github.com/CRISTOP-bot/talon/internal/injection"
+	"github.com/CRISTOP-bot/talon/internal/legal"
+	"github.com/CRISTOP-bot/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/perm"
+	"github.com/CRISTOP-bot/talon/internal/privacy"
+	"github.com/CRISTOP-bot/talon/internal/secrets"
+	"github.com/CRISTOP-bot/talon/internal/secure"
+	"github.com/CRISTOP-bot/talon/internal/shell"
+	"github.com/CRISTOP-bot/talon/internal/tools"
 )
 
 // buildSecurity assembles the security posture and points every component at it.

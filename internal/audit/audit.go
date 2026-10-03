@@ -17,7 +17,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/talon-cli/talon/internal/secrets"
+	"github.com/CRISTOP-bot/talon/internal/secrets"
 )
 
 // Kind classifies an event.

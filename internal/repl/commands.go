@@ -8,15 +8,15 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/agent"
-	buildcontext "github.com/talon-cli/talon/internal/context"
-	"github.com/talon-cli/talon/internal/diff"
-	"github.com/talon-cli/talon/internal/errs"
-	"github.com/talon-cli/talon/internal/index"
-	"github.com/talon-cli/talon/internal/journal"
-	"github.com/talon-cli/talon/internal/llm"
-	"github.com/talon-cli/talon/internal/perm"
-	"github.com/talon-cli/talon/internal/session"
+	"github.com/CRISTOP-bot/talon/internal/agent"
+	buildcontext "github.com/CRISTOP-bot/talon/internal/context"
+	"github.com/CRISTOP-bot/talon/internal/diff"
+	"github.com/CRISTOP-bot/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/index"
+	"github.com/CRISTOP-bot/talon/internal/journal"
+	"github.com/CRISTOP-bot/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/perm"
+	"github.com/CRISTOP-bot/talon/internal/session"
 )
 
 // slashDescriptions documents each command for /help and completion.

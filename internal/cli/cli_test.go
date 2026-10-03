@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/talon-cli/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/errs"
 )
 
 // testApp builds an app with a couple of commands writing into a buffer.

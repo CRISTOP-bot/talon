@@ -4,8 +4,8 @@ package main
 import (
 	"os"
 
-	"github.com/talon-cli/talon/internal/cli"
-	"github.com/talon-cli/talon/internal/commands"
+	"github.com/CRISTOP-bot/talon/internal/cli"
+	"github.com/CRISTOP-bot/talon/internal/commands"
 )
 
 func main() {

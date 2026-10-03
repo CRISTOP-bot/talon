@@ -78,7 +78,7 @@ build system.
 ### One-line install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/talon-cli/talon/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/CRISTOP-bot/talon/main/install.sh | sh
 ```
 
 That pipes a remote script into a shell, which is exactly the pattern this
@@ -86,7 +86,7 @@ project warns against in its own documentation. If you would rather see what you
 run, download it first — the result is identical:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/talon-cli/talon/main/install.sh -o install.sh
+curl -fsSL https://raw.githubusercontent.com/CRISTOP-bot/talon/main/install.sh -o install.sh
 less install.sh
 sh install.sh
 ```
@@ -139,7 +139,7 @@ make checksums  # dist/checksums.txt, which `talon update` verifies against
 Requires Go 1.24 or newer.
 
 ```bash
-git clone https://github.com/talon-cli/talon.git
+git clone https://github.com/CRISTOP-bot/talon.git
 cd talon
 make build          # builds ./bin/talon
 make install        # installs into $(go env GOPATH)/bin
@@ -148,7 +148,7 @@ make install        # installs into $(go env GOPATH)/bin
 Or without cloning:
 
 ```bash
-go install github.com/talon-cli/talon/cmd/talon@latest
+go install github.com/CRISTOP-bot/talon/cmd/talon@latest
 ```
 
 ### Verify the installation

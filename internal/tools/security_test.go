@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/talon-cli/talon/internal/audit"
-	"github.com/talon-cli/talon/internal/injection"
-	"github.com/talon-cli/talon/internal/sensitive"
+	"github.com/CRISTOP-bot/talon/internal/audit"
+	"github.com/CRISTOP-bot/talon/internal/injection"
+	"github.com/CRISTOP-bot/talon/internal/sensitive"
 )
 
 // newGatedContext returns a context whose workspace contains the files used by

@@ -3,8 +3,8 @@ Version: @VERSION@
 Section: devel
 Priority: optional
 Architecture: amd64
-Maintainer: Talon contributors <maintainers@talon.dev>
-Homepage: https://github.com/talon-cli/talon
+Maintainer: CRISTOP-bot <borjascristopher88@gmail.com>
+Homepage: https://github.com/CRISTOP-bot/talon
 Description: Agentic coding CLI for the terminal
  Talon reads your project, plans changes, edits files, runs your build and
  tests, reads the errors and fixes the cause, all from one prompt.

@@ -2,9 +2,9 @@
 package commands
 
 import (
-	"github.com/talon-cli/talon/internal/cli"
-	"github.com/talon-cli/talon/internal/config"
-	"github.com/talon-cli/talon/internal/tools"
+	"github.com/CRISTOP-bot/talon/internal/cli"
+	"github.com/CRISTOP-bot/talon/internal/config"
+	"github.com/CRISTOP-bot/talon/internal/tools"
 )
 
 // Register adds every command to the app.

@@ -7,7 +7,7 @@
 - nothing else: there are no third-party Go modules
 
 ```bash
-git clone https://github.com/talon-cli/talon
+git clone https://github.com/CRISTOP-bot/talon
 cd talon
 make help
 make build

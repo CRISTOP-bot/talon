@@ -11,11 +11,11 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/config"
-	"github.com/talon-cli/talon/internal/index"
-	"github.com/talon-cli/talon/internal/memory"
-	"github.com/talon-cli/talon/internal/project"
-	"github.com/talon-cli/talon/internal/tools"
+	"github.com/CRISTOP-bot/talon/internal/config"
+	"github.com/CRISTOP-bot/talon/internal/index"
+	"github.com/CRISTOP-bot/talon/internal/memory"
+	"github.com/CRISTOP-bot/talon/internal/project"
+	"github.com/CRISTOP-bot/talon/internal/tools"
 )
 
 // Builder assembles the system prompt.

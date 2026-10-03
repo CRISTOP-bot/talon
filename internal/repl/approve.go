@@ -7,10 +7,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/agent"
-	"github.com/talon-cli/talon/internal/llm"
-	"github.com/talon-cli/talon/internal/perm"
-	"github.com/talon-cli/talon/internal/ui"
+	"github.com/CRISTOP-bot/talon/internal/agent"
+	"github.com/CRISTOP-bot/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/perm"
+	"github.com/CRISTOP-bot/talon/internal/ui"
 )
 
 // Approve implements agent.Approver: it shows a confirmation panel and waits for

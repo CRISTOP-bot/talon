@@ -17,11 +17,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/talon-cli/talon/internal/errs"
-	"github.com/talon-cli/talon/internal/logger"
-	"github.com/talon-cli/talon/internal/perm"
-	"github.com/talon-cli/talon/internal/rpc"
-	"github.com/talon-cli/talon/internal/tools"
+	"github.com/CRISTOP-bot/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/logger"
+	"github.com/CRISTOP-bot/talon/internal/perm"
+	"github.com/CRISTOP-bot/talon/internal/rpc"
+	"github.com/CRISTOP-bot/talon/internal/tools"
 )
 
 // ProtocolVersion is the MCP revision Talon implements.

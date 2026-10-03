@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/errs"
 )
 
 // Gemini implements Google's generateContent streaming API.

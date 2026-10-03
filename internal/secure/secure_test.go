@@ -8,10 +8,10 @@ import (
 
 	"context"
 
-	"github.com/talon-cli/talon/internal/config"
-	"github.com/talon-cli/talon/internal/netguard"
-	"github.com/talon-cli/talon/internal/privacy"
-	"github.com/talon-cli/talon/internal/sensitive"
+	"github.com/CRISTOP-bot/talon/internal/config"
+	"github.com/CRISTOP-bot/talon/internal/netguard"
+	"github.com/CRISTOP-bot/talon/internal/privacy"
+	"github.com/CRISTOP-bot/talon/internal/sensitive"
 )
 
 func testPosture(t *testing.T, mutate func(*config.Config)) *Posture {

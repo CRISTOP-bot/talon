@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/talon-cli/talon/internal/diff"
+	"github.com/CRISTOP-bot/talon/internal/diff"
 )
 
 func mono() Theme { return MonoTheme() }

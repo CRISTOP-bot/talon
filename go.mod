@@ -1,3 +1,3 @@
-module github.com/talon-cli/talon
+module github.com/CRISTOP-bot/talon
 
 go 1.24

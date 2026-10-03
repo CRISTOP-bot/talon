@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/cli"
-	"github.com/talon-cli/talon/internal/config"
-	"github.com/talon-cli/talon/internal/errs"
-	"github.com/talon-cli/talon/internal/toml"
+	"github.com/CRISTOP-bot/talon/internal/cli"
+	"github.com/CRISTOP-bot/talon/internal/config"
+	"github.com/CRISTOP-bot/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/toml"
 )
 
 const configHelp = `

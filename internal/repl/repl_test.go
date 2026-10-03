@@ -8,12 +8,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/talon-cli/talon/internal/agent"
-	"github.com/talon-cli/talon/internal/config"
-	"github.com/talon-cli/talon/internal/llm"
-	"github.com/talon-cli/talon/internal/paths"
-	"github.com/talon-cli/talon/internal/perm"
-	"github.com/talon-cli/talon/internal/ui"
+	"github.com/CRISTOP-bot/talon/internal/agent"
+	"github.com/CRISTOP-bot/talon/internal/config"
+	"github.com/CRISTOP-bot/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/paths"
+	"github.com/CRISTOP-bot/talon/internal/perm"
+	"github.com/CRISTOP-bot/talon/internal/ui"
 )
 
 // newTestREPL builds a REPL over a temporary project with a scripted provider.

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/talon-cli/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/errs"
 )
 
 func TestRunCapturesOutput(t *testing.T) {

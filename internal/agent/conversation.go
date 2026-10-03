@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/llm"
+	"github.com/CRISTOP-bot/talon/internal/llm"
 )
 
 // Conversation is the message history handed to the model. It estimates token

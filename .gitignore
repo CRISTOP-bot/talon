@@ -4,3 +4,6 @@
 *.rpm
 *.AppImage
 .DS_Store
+
+# Compiled example plugin binary
+examples/plugins/hello/hello

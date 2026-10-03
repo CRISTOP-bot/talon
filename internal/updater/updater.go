@@ -21,8 +21,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/talon-cli/talon/internal/app"
-	"github.com/talon-cli/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/app"
+	"github.com/CRISTOP-bot/talon/internal/errs"
 )
 
 // Release is a published release.

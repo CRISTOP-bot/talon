@@ -5,17 +5,17 @@
 # against the published SHA-256 checksum, and installs it into a directory on
 # your PATH. Nothing downloaded is executed before it has been verified.
 #
-#   curl -fsSL https://raw.githubusercontent.com/talon-cli/talon/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/CRISTOP-bot/talon/main/install.sh | sh
 #
 # Environment:
 #   TALON_VERSION   release tag to install (default: the latest release)
-#   TALON_REPO      owner/name (default: talon-cli/talon)
+#   TALON_REPO      owner/name (default: CRISTOP-bot/talon)
 #   TALON_INSTALL   install directory (default: /usr/local/bin, or ~/.local/bin)
 #   TALON_NOCHECK   set to 1 to skip checksum verification (not recommended)
 
 set -eu
 
-REPO="${TALON_REPO:-talon-cli/talon}"
+REPO="${TALON_REPO:-CRISTOP-bot/talon}"
 API="https://api.github.com"
 INSTALL_DIR="${TALON_INSTALL:-}"
 

@@ -11,12 +11,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/talon-cli/talon/internal/app"
-	"github.com/talon-cli/talon/internal/cli"
-	"github.com/talon-cli/talon/internal/errs"
-	"github.com/talon-cli/talon/internal/session"
-	"github.com/talon-cli/talon/internal/ui"
-	"github.com/talon-cli/talon/internal/updater"
+	"github.com/CRISTOP-bot/talon/internal/app"
+	"github.com/CRISTOP-bot/talon/internal/cli"
+	"github.com/CRISTOP-bot/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/session"
+	"github.com/CRISTOP-bot/talon/internal/ui"
+	"github.com/CRISTOP-bot/talon/internal/updater"
 )
 
 const updateHelp = `

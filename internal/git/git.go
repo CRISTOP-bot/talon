@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/talon-cli/talon/internal/errs"
+	"github.com/CRISTOP-bot/talon/internal/errs"
 )
 
 // Client runs git commands in a repository.
