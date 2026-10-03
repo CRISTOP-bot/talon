@@ -48,8 +48,10 @@ jobs:
           version="${GITHUB_REF_NAME}"
           mkdir -p pkg/DEBIAN pkg/usr/bin
           cp "dist/talon-${version}-linux-amd64" pkg/usr/bin/talon
-          sed -e "s/@VERSION@/${version}/" packaging/deb-control.in > pkg/DEBIAN/control
-          dpkg-deb --build --root-owner-group pkg "dist/talon_${version}_linux_amd64.deb"
+          # A Debian version must start with a digit, while the tag starts with "v".
+          pkg_version="${version#v}"
+          sed -e "s/@VERSION@/${pkg_version}/" packaging/deb-control.in > pkg/DEBIAN/control
+          dpkg-deb --build --root-owner-group pkg "dist/talon_${pkg_version}_linux_amd64.deb"
 
       - name: Publish the release
         uses: softprops/action-gh-release@v2

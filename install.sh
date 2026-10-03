@@ -16,6 +16,7 @@
 set -eu
 
 REPO="${TALON_REPO:-CRISTOP-bot/talon}"
+PKG="github.com/$REPO/cmd/talon"
 API="https://api.github.com"
 INSTALL_DIR="${TALON_INSTALL:-}"
 
@@ -59,6 +60,49 @@ fetch_to() {
     fi
 }
 
+# fetch_release asks the API for a release and reports why it failed, because
+# "no releases yet" and "the network is down" need very different responses.
+# Sets api_status and api_body.
+fetch_release() {
+    api_body=$(mktemp)
+    if command -v curl >/dev/null 2>&1; then
+        api_status=$(curl -sSL -o "$api_body" -w '%{http_code}' "$1" || printf '000')
+    elif command -v wget >/dev/null 2>&1; then
+        if wget -qO "$api_body" "$1"; then
+            api_status=200
+        else
+            api_status=000
+        fi
+    else
+        fail "curl or wget is required"
+    fi
+}
+
+explain_release_failure() {
+    case "$api_status" in
+        404)
+            if [ -n "${TALON_VERSION:-}" ]; then
+                fail "there is no release tagged $TALON_VERSION in $REPO"
+            fi
+            fail "there is no published release in $REPO yet.
+  Nothing is installed when there is nothing to verify.
+  Build from source instead:
+    go install $PKG@latest"
+            ;;
+        403|429)
+            fail "the GitHub API refused the request (HTTP $api_status), usually a rate limit.
+  Wait a minute and try again, or install from source:
+    go install $PKG@latest"
+            ;;
+        000)
+            fail "could not reach the GitHub API. Check your network or proxy settings."
+            ;;
+        *)
+            fail "the GitHub API returned HTTP $api_status for $1"
+            ;;
+    esac
+}
+
 sha256_of() {
     if command -v sha256sum >/dev/null 2>&1; then
         sha256sum "$1" | cut -d' ' -f1
@@ -91,9 +135,12 @@ main() {
         release_url="$API/repos/$REPO/releases/latest"
     fi
 
-    release_json=$(fetch "$release_url") || fail "could not reach the release API"
+    fetch_release "$release_url"
+    [ "$api_status" = "200" ] || explain_release_failure "$release_url"
+    release_json=$(cat "$api_body")
+    rm -f "$api_body"
     tag=$(printf '%s' "$release_json" | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)
-    [ -n "$tag" ] || fail "could not determine the release tag"
+    [ -n "$tag" ] || fail "could not read the release tag from the GitHub API response"
 
     asset_name="talon-${tag}-${platform}"
 

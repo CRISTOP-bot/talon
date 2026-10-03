@@ -6,6 +6,9 @@ APP      := talon
 PKG      := github.com/CRISTOP-bot/talon/cmd/talon
 BIN_DIR  := bin
 VERSION  ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo 0.1.0)
+# Package versions must start with a digit, while git tags conventionally start
+# with "v". Strip it where the format demands it.
+PKG_VERSION := $(patsubst v%,%,$(VERSION))
 COMMIT   ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo none)
 DATE     ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 LDFLAGS  := -s -w -X github.com/CRISTOP-bot/talon/internal/app.Version=$(VERSION) \
@@ -90,14 +93,14 @@ checksums: cross ## Write dist/checksums.txt
 deb: build ## Build a Debian package (requires dpkg-deb)
 	@mkdir -p dist/pkg/DEBIAN dist/pkg/usr/bin
 	cp $(BIN_DIR)/$(APP) dist/pkg/usr/bin/$(APP)
-	@sed -e 's/@VERSION@/$(VERSION)/' packaging/deb-control.in > dist/pkg/DEBIAN/control
-	dpkg-deb --build --root-owner-group dist/pkg dist/$(APP)_$(VERSION)_linux_amd64.deb
-	@echo "built dist/$(APP)_$(VERSION)_linux_amd64.deb"
+	@sed -e 's/@VERSION@/$(PKG_VERSION)/' packaging/deb-control.in > dist/pkg/DEBIAN/control
+	dpkg-deb --build --root-owner-group dist/pkg dist/$(APP)_$(PKG_VERSION)_linux_amd64.deb
+	@echo "built dist/$(APP)_$(PKG_VERSION)_linux_amd64.deb"
 
 .PHONY: rpm
 rpm: build ## Build an RPM package (requires rpmbuild)
 	rpmbuild -bb packaging/rpm.spec \
-		--define "_version $(VERSION)" \
+		--define "_version $(PKG_VERSION)" \
 		--define "_sourcedir $(PWD)/$(BIN_DIR)" \
 		--define "_rpmdir $(PWD)/dist"
 	@echo "built an rpm in dist/"
