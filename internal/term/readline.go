@@ -118,7 +118,9 @@ func (r *Readline) readLinePlain(prompt string) (string, error) {
 }
 
 func (e *editor) loop() (string, error) {
-	buf := make([]byte, 0, 16)
+	// The buffer must have a length: a zero-length slice makes read(2) return
+	// (0, nil) immediately, which spins forever and never sees a keystroke.
+	buf := make([]byte, 256)
 	e.redraw()
 	for {
 		n, err := e.rl.In.Read(buf)

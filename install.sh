@@ -12,6 +12,11 @@
 #   TALON_REPO      owner/name (default: CRISTOP-bot/talon)
 #   TALON_INSTALL   install directory (default: /usr/local/bin, or ~/.local/bin)
 #   TALON_NOCHECK   set to 1 to skip checksum verification (not recommended)
+#
+# The install directory is added to the PATH in every shell start-up file it
+# finds (.profile, .bashrc, .bash_profile, .zshrc, fish's config.fish and
+# ~/.config/profile.d), using the syntax each shell understands. Existing files
+# are backed up as <file>.talon.bak and never rewritten twice.
 
 set -eu
 
@@ -113,16 +118,135 @@ sha256_of() {
     fi
 }
 
+writable() {
+    # writable <dir> : true when a file can actually be created there
+    [ -n "$1" ] || return 1
+    [ -d "$1" ] || mkdir -p "$1" 2>/dev/null || return 1
+    [ -w "$1" ] || return 1
+    return 0
+}
+
 pick_install_dir() {
     if [ -n "$INSTALL_DIR" ]; then
+        writable "$INSTALL_DIR" || fail "cannot write to $INSTALL_DIR"
         printf '%s' "$INSTALL_DIR"
         return
     fi
-    if [ "$(id -u)" = "0" ] && [ -d /usr/local/bin ]; then
+    # Prefer a system directory only when it is genuinely usable, so a
+    # half-installed command is never left behind.
+    if [ "$(id -u)" = "0" ] && writable /usr/local/bin; then
         printf '%s' "/usr/local/bin"
         return
     fi
-    printf '%s' "$HOME/.local/bin"
+    if [ "$(id -u)" != "0" ] && writable /usr/local/bin 2>/dev/null; then
+        printf '%s' "/usr/local/bin"
+        return
+    fi
+    if writable "$HOME/.local/bin"; then
+        printf '%s' "$HOME/.local/bin"
+        return
+    fi
+    fail "no writable install directory found. Set TALON_INSTALL to one, for example:
+  TALON_INSTALL=\"$HOME/bin\" sh install.sh"
+}
+
+# path_already_set <file> : true when the directory is already on the PATH there
+path_already_set() {
+    grep -qF "$INSTALL_PATH" "$1" 2>/dev/null
+}
+
+# add_to_shell <file> <line> [create] : append the line unless the file already
+# sets the path. With "create", a missing file is created rather than skipped.
+# Returns 0 when the file was written, 2 when it already had the path.
+add_to_shell() {
+    file="$1"
+    line="$2"
+    create="${3:-}"
+    if [ ! -f "$file" ]; then
+        [ -n "$create" ] || return 1
+        mkdir -p "$(dirname "$file")" 2>/dev/null || return 1
+        printf '%s\n' "$line" > "$file" 2>/dev/null || return 1
+        return 0
+    fi
+    path_already_set "$file" && return 2
+    mkdir -p "$(dirname "$file")" 2>/dev/null || return 1
+    cp "$file" "$file.talon.bak" 2>/dev/null || true
+    {
+        printf '\n# Added by the Talon installer\n'
+        printf '%s\n' "$line"
+    } >> "$file" || return 1
+    return 0
+}
+
+# setup_path makes the install directory visible to every shell that reads a
+# start-up file on this machine. Each shell needs its own syntax: fish does not
+# understand "export PATH", and bash does not read .zshrc.
+setup_path() {
+    case ":$PATH:" in
+        *":$INSTALL_PATH:"*)
+            log ""
+            log "$INSTALL_PATH is already on your PATH"
+            return 0
+            ;;
+    esac
+
+    written=0
+    skipped=0
+
+    posix_line="export PATH=\"$INSTALL_PATH:\$PATH\""
+    fish_line="fish_add_path $INSTALL_PATH"
+
+    # .profile is the POSIX login file, so it is created when missing; the rest
+    # are only edited when they already exist.
+    if add_to_shell "$HOME/.profile" "$posix_line" create; then
+        written=$((written + 1))
+    elif [ $? -eq 2 ]; then
+        skipped=$((skipped + 1))
+    fi
+    for rc in "$HOME/.bash_profile" "$HOME/.bashrc" \
+               "$HOME/.zshrc" "$HOME/.config/zsh/.zshrc"; do
+        if add_to_shell "$rc" "$posix_line"; then
+            written=$((written + 1))
+        elif [ $? -eq 2 ]; then
+            skipped=$((skipped + 1))
+        fi
+    done
+
+    fish_rc="$HOME/.config/fish/config.fish"
+    if [ -f "$fish_rc" ]; then
+        if add_to_shell "$fish_rc" "$fish_line"; then
+            written=$((written + 1))
+        elif [ $? -eq 2 ]; then
+            skipped=$((skipped + 1))
+        fi
+    fi
+
+    # profile.d covers sh, dash and any login shell that sources it, without
+    # touching files the user owns.
+    profile_d="$HOME/.config/profile.d"
+    snippet="$profile_d/talon.sh"
+    if mkdir -p "$profile_d" 2>/dev/null; then
+        if ! path_already_set "$snippet"; then
+            printf '# Added by the Talon installer\nexport PATH="%s:$PATH"\n' \
+                "$INSTALL_PATH" > "$snippet" 2>/dev/null && written=$((written + 1))
+        else
+            skipped=$((skipped + 1))
+        fi
+    fi
+
+    if [ "$written" -gt 0 ]; then
+        log ""
+        log "added $INSTALL_PATH to the PATH in $written start-up file(s)"
+        log "open a new terminal, or run: exec \$SHELL"
+    elif [ "$skipped" -gt 0 ]; then
+        log ""
+        log "$INSTALL_PATH was already in your shell start-up files"
+    else
+        log ""
+        log "could not update any shell start-up file; add this yourself:"
+        log "  POSIX shells (bash, zsh, sh):  export PATH=\"$INSTALL_PATH:\$PATH\""
+        log "  fish:                          set -U fish_user_paths $INSTALL_PATH \$fish_user_paths"
+    fi
 }
 
 main() {
@@ -179,13 +303,8 @@ main() {
     mv "$dir/talon.tmp" "$dir/talon"
     log "installed $dir/talon"
 
-    case ":$PATH:" in
-        *":$dir:"*) ;;
-        *) log ""
-           log "$dir is not on your PATH. Add this to your shell profile:"
-           log "  export PATH=\"$dir:\$PATH\""
-           log "" ;;
-    esac
+    INSTALL_PATH="$dir"
+    setup_path
 
     log ""
     log "next steps:"
