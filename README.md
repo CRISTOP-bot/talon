@@ -75,15 +75,47 @@ build system.
 
 ## Install
 
-### From a release (recommended)
+### One-line install
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/talon-cli/talon/main/install.sh | sh
 ```
 
-The script detects your OS/architecture, verifies the SHA-256 checksum published
-with the release, and installs into `/usr/local/bin`. Read it first if you prefer:
-`curl -fsSL …/install.sh -o install.sh && less install.sh && sh install.sh`.
+That pipes a remote script into a shell, which is exactly the pattern this
+project warns against in its own documentation. If you would rather see what you
+run, download it first — the result is identical:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/talon-cli/talon/main/install.sh -o install.sh
+less install.sh
+sh install.sh
+```
+
+What the script does, in order: detects OS and architecture, asks the GitHub
+API for the latest release (or `$TALON_VERSION`), downloads the matching asset,
+downloads `checksums.txt` from the same release, refuses to continue unless the
+published SHA-256 matches, and only then installs into `/usr/local/bin` (or
+`$TALON_INSTALL`, or `~/.local/bin` when not root). Nothing is executed before it
+is verified, and a missing checksum is a hard failure, not a warning.
+
+| Variable | Effect |
+| --- | --- |
+| `TALON_VERSION` | install a specific release tag instead of the latest |
+| `TALON_INSTALL` | install directory (default `/usr/local/bin`, else `~/.local/bin`) |
+| `TALON_REPO` | install from a fork: `TALON_REPO=user/talon sh install.sh` |
+| `TALON_NOCHECK` | `1` skips checksum verification — not recommended |
+
+Install into your home directory without root:
+
+```bash
+TALON_INSTALL="$HOME/.local/bin" sh install.sh
+export PATH="$HOME/.local/bin:$PATH"   # add to your shell profile to persist
+```
+
+Supported targets: `linux` and `darwin` on `amd64` and `arm64`. Everything else
+should be built from source (`go install ./cmd/talon`). The current limitation
+is that releases are verified by checksum only; there is no signature
+verification yet — see [docs/security-review.md](docs/security-review.md).
 
 ### Packages
 
@@ -107,10 +139,16 @@ make checksums  # dist/checksums.txt, which `talon update` verifies against
 Requires Go 1.24 or newer.
 
 ```bash
-git clone https://github.com/talon-cli/talon
+git clone https://github.com/talon-cli/talon.git
 cd talon
 make build          # builds ./bin/talon
 make install        # installs into $(go env GOPATH)/bin
+```
+
+Or without cloning:
+
+```bash
+go install github.com/talon-cli/talon/cmd/talon@latest
 ```
 
 ### Verify the installation
