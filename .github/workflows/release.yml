@@ -1,0 +1,68 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Verify
+        run: |
+          out=$(gofmt -l cmd internal examples)
+          if [ -n "$out" ]; then echo "gofmt needed: $out"; exit 1; fi
+          go vet ./...
+          go test ./...
+
+      - name: Build binaries
+        run: |
+          version="${GITHUB_REF_NAME}"
+          for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do
+            os="${target%/*}"; arch="${target#*/}"
+            out="dist/talon-${version}-${os}-${arch}"
+            [ "$os" = "windows" ] && out="${out}.exe"
+            CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -trimpath \
+              -ldflags "-s -w -X github.com/talon-cli/talon/internal/app.Version=${version} \
+                        -X github.com/talon-cli/talon/internal/app.Commit=${GITHUB_SHA} \
+                        -X github.com/talon-cli/talon/internal/app.Date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+              -o "$out" ./cmd/talon
+          done
+
+      - name: Checksums
+        run: cd dist && sha256sum talon-* > checksums.txt && cat checksums.txt
+
+      - name: Debian package
+        run: |
+          version="${GITHUB_REF_NAME}"
+          mkdir -p pkg/DEBIAN pkg/usr/bin
+          cp "dist/talon-${version}-linux-amd64" pkg/usr/bin/talon
+          sed -e "s/@VERSION@/${version}/" packaging/deb-control.in > pkg/DEBIAN/control
+          dpkg-deb --build --root-owner-group pkg "dist/talon_${version}_linux_amd64.deb"
+
+      - name: Publish the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/talon-*
+            dist/talon_*.deb
+          fail_on_unmatched_files: true
+          body: |
+            Talon ${{ github.ref_name }}
+
+            Verify a download with `sha256sum --check checksums.txt`; `talon update`
+            refuses to install a binary without a published checksum.
+
+            Install:
+              curl -fsSL https://raw.githubusercontent.com/talon-cli/talon/main/install.sh | sh

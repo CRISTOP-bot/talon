@@ -1,0 +1,9 @@
+{
+  "name": "hello",
+  "version": "1.0.0",
+  "description": "Example plugin: greets people and reports the time",
+  "command": "./hello",
+  "args": [],
+  "tool_prefix": "hello",
+  "risk": "read"
+}

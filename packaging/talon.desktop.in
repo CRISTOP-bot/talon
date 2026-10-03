@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Talon
+Comment=Agentic coding CLI for the terminal
+Exec=@EXEC@
+Terminal=true
+Categories=Development;Utility;

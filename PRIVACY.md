@@ -1,0 +1,119 @@
+# Privacy
+
+This file mirrors the Privacy Notice embedded in the binary. The authoritative
+text is `internal/legal/assets/privacy/v1.0.0.md`, which is what
+`talon privacy` prints. A test fails if the two drift apart.
+
+---
+
+# Talon Privacy Notice — version 1.0.0
+
+**Effective date:** 2026-10-03
+**Applies to:** Talon CLI
+
+This notice describes what Talon stores, what it sends, and what it never
+collects. It is written to be read, not to be skimmed past. It has not been
+reviewed by a lawyer; if you need a legally sufficient privacy notice for your
+organisation, have one drafted by a qualified attorney.
+
+## 1. Summary
+
+- Talon has **no accounts, no servers and no telemetry**.
+- The Talon project **receives nothing**. There is no analytics, no crash
+  reporting and no phone-home.
+- Everything Talon stores stays on your machine, under your home directory,
+  readable only by you.
+- The only data that leaves your machine is what you send to **the model
+  provider you configured**, and Talon shows you that before it happens.
+
+## 2. What stays on your machine
+
+| Location | Contents | Default lifetime |
+|---|---|---|
+| `~/.config/talon/config.toml` | your settings; may contain an API key if you chose to store one there | until you delete it |
+| `~/.local/share/talon/sessions/` | conversation transcripts (your requests and the model's replies) | until you delete them or `sessions.max` is exceeded |
+| `~/.local/share/talon/memory/` | notes you asked Talon to remember | until you delete them |
+| `~/.local/share/talon/plugins/` | plugins you installed | until you remove them |
+| `~/.local/state/talon/logs/` | debug logs, credential-redacted | until you delete them |
+| `~/.local/state/talon/history/` | your input history | until you delete it |
+| `~/.local/share/talon/legal/terms.json` | which Terms version you accepted, and when | until you delete it |
+| `~/.local/share/talon/audit/audit.jsonl` | security decisions (tool names, paths, hosts, outcomes); **never** conversation content | until you delete it |
+| `~/.cache/talon/journal/` | file snapshots used by `/undo` | until you delete them |
+| `<project>/.talon/` | project-local config and memory files you create | under your version control |
+
+Everything except the files you choose to commit is created with owner-only
+permissions (`0600` for files, `0700` for directories).
+
+## 3. What is sent to a third party
+
+Only to the **model provider you configured**:
+
+- your prompts, the conversation so far, and tool results Talon decided the
+  model needs;
+- fragments of file contents the model asked for, marked as data and scanned
+  for credentials first;
+- the API key you provided, in the request header only.
+
+Talon does not send: your file listing as a whole, your shell history, your
+environment, your git credentials, your SSH keys, telemetry, or anything about
+your machine beyond what the model needs for the task.
+
+Every request goes through a network policy that blocks cloud metadata
+endpoints and non-allowlisted hosts, requires HTTPS, and records the destination
+in `talon audit`. Providers that need to see your data are unavoidable when you
+use a hosted model: **do not send proprietary code to a hosted provider unless
+your agreement with that provider allows it.** Use `ollama` or `llamacpp` to
+keep inference local.
+
+## 4. Credential handling
+
+- API keys are read from the environment by default and are never written to
+  logs, errors, memory notes or audit records.
+- If you store a key in `config.toml`, Talon creates the file with `0600`
+  permissions and prints it masked (`sk-••••••1234`) unless you explicitly ask
+  for the raw value.
+- Content Talon is about to send is scanned for credentials; by default detected
+  secrets are masked before transmission.
+- Files that are credential material by name (`.env`, `id_rsa`, `*.pem`,
+  `.npmrc`, `.git-credentials`, cloud service-account keys…) are blocked by
+  default from being read into a prompt.
+
+## 5. Retention and deletion
+
+Talon has no server-side retention because it has no server. Local data is
+retained until you delete it:
+
+```bash
+talon data list          # what exists and how large
+talon data clear         # remove it, after confirmation
+talon data clear --all   # including plugins and project-local memory
+talon history clear      # input history only
+```
+
+`--privacy` mode goes further: it disables session persistence, memory writes,
+logs and the audit log for the duration of the session.
+
+## 6. Local technical information
+
+Logs may contain the provider name, model name, tool names, file paths,
+commands, exit codes and error messages needed to debug a run. They do not
+contain credentials or full prompts unless you enable verbose logging
+(`TALON_LOG_LEVEL=debug`), which is documented as a privacy trade-off.
+
+## 7. Third-party software
+
+Talon is built from the Go standard library only; it has no vendored
+third-party runtime code. Model providers, plugins and MCP servers are separate
+programs or services with their own licences and privacy policies. Talon never
+executes a downloaded script; installing a plugin runs only the executable its
+manifest names, and you are expected to review it first.
+
+## 8. Children
+
+Talon is a developer tool and is not directed at children.
+
+## 9. Changes to this notice
+
+The notice is versioned like the terms. Material changes appear in
+`CHANGELOG.md`; `talon privacy --current` always shows the version in force on
+your machine.

@@ -1,0 +1,6 @@
+/bin/
+/dist/
+*.deb
+*.rpm
+*.AppImage
+.DS_Store
