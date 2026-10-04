@@ -8,6 +8,29 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+**Full-screen interface (opencode-style)**
+- `internal/tui`: a screen buffer with a difference renderer, the alternate
+  screen, resize handling and a palette; only changed cells are written, so
+  typing stays responsive.
+- `internal/tuiapp`: the session view: header, scrolling conversation, editor,
+  footer with the mode indicator, and overlays.
+- `Tab` switches between build and plan mode with the indicator at the lower
+  right; `@` opens a fuzzy file picker that inserts `@path`; `/` opens a command
+  palette over the existing slash commands.
+- Confirmations are shown inside the conversation instead of on a separate
+  screen, and every existing slash command works unchanged: the printer's output
+  is captured and turned into conversation blocks.
+- `--no-tui` keeps the line editor, which is what pipes and CI use.
+
+**Interactive input**
+- The line editor no longer ignores the keyboard: it allocated a zero-length read
+  buffer, so every read returned immediately and the prompt never received a
+  keystroke.
+- Raw mode now clears `ISIG`, so `Ctrl+C` reaches the application instead of
+  being turned into `SIGINT` by the terminal.
+
+### Fixed
+
 **Security layer**
 - `internal/secure`: one assembled posture built from configuration and wired
   into the tools, the shell runner, the provider client and the REPL.
@@ -42,6 +65,11 @@ All notable changes to this project are documented here. The format follows
 - Adversarial tests for prompt injection, secret leakage into content, search
   results and the audit log, path and size gates, network policy defaults,
   consent and privacy mode.
+
+- Every named colour in the interface palette was shifted by one (an `iota`
+  offset), so the accent colour rendered as magenta.
+- A pty master does not support read deadlines on Linux, so the interface tests
+  read through a goroutine.
 
 ### Fixed
 - Session flags placed before a prompt (for example `talon --yes "…"`) are no

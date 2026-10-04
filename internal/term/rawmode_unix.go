@@ -25,7 +25,10 @@ func MakeRaw(f *os.File) (*State, error) {
 	}
 	raw := *old
 	raw.Iflag &^= syscall.IXON | syscall.ICRNL | syscall.BRKINT | syscall.INPCK | syscall.ISTRIP
-	raw.Lflag &^= syscall.ECHO | syscall.ICANON | syscall.IEXTEN
+	// ISIG must go too: with it enabled the terminal turns Ctrl+C into SIGINT
+	// and the application never sees the key, so it cannot decide whether to
+	// clear the line, interrupt a turn or quit.
+	raw.Lflag &^= syscall.ECHO | syscall.ICANON | syscall.IEXTEN | syscall.ISIG
 	raw.Cc[syscall.VMIN] = 1
 	raw.Cc[syscall.VTIME] = 0
 	if err := setTermios(fd, &raw); err != nil {

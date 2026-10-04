@@ -14,10 +14,18 @@ import (
 )
 
 // Approve implements agent.Approver: it shows a confirmation panel and waits for
-// the user. In auto-approve mode (--yes) it answers yes immediately.
+// the user. In auto-approve mode (--yes) it answers yes immediately, and the
+// full-screen interface shows the same panel inside the conversation.
 func (r *REPL) Approve(ctx context.Context, req perm.Request, call llm.ToolCall) (agent.Approval, error) {
 	if r.opts.AutoApprove {
 		return agent.Approval{Allow: true, Always: true}, nil
+	}
+	if a := r.tuiApp; a != nil {
+		allow := a.RequestApproval(req.Description, req.Tool, req.Risk.String(), req.Command, req.Path)
+		if allow {
+			return agent.Approval{Allow: true}, nil
+		}
+		return agent.Approval{Allow: false, Reason: "the user declined the action"}, nil
 	}
 	r.spinner.Stop("")
 	theme := r.theme

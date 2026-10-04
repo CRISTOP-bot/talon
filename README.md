@@ -216,6 +216,48 @@ if `model.base_url` points at something that speaks that protocol.
 
 ---
 
+## The interface
+
+Talon opens a full-screen interface when it runs on a terminal, and falls back
+to a line editor when it does not (pipes, CI, logs). Force the line editor with
+`--no-tui`.
+
+```
+┌────────────────────────────────────────────────────────────────────────────┐
+│ talon 0.1.0                              anthropic/claude-sonnet · confirm │
+├────────────────────────────────────────────────────────────────────────────┤
+│                                                                            │
+│  you   refactor el parser para que tolere CRLF                            │
+│                                                                            │
+│        Hecho. Cambié internal/parser.go para normalizar los finales de    │
+│        línea antes de tokenizar, y añadí un caso de prueba.                │
+│                                                                            │
+│  • edit_file internal/parser.go                                            │
+│  • run_command go test ./...                                               │
+│                                                                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│ ❯ revisa el parser y dime si falta algo @internal/parser.go                │
+│ tab plan/build · @ file · / command · ctrl+l clear · ctrl+c exit           │
+│                                                            plan           │
+└────────────────────────────────────────────────────────────────────────────┘
+```
+
+| Key | What it does |
+| --- | --- |
+| type | write the request; every keystroke is rendered as you press it |
+| `Tab` | switch between **build** and **plan** mode, shown at the lower right |
+| `@` | fuzzy file picker; `Enter` inserts `@path` into the request |
+| `/` | command palette over every slash command |
+| `Enter` | send the request |
+| `Ctrl+C` | clear the request; interrupt a running turn; leave when empty |
+| `Ctrl+D` | leave when the request is empty |
+| `Ctrl+L` | clear the conversation |
+| `↑` `↓` | walk the history |
+
+In **plan** mode the agent reads and proposes but changes nothing, exactly like
+`--plan`. The permission level, the sandbox and every security control apply
+identically in both interfaces: the interface is a view, not a policy.
+
 ## Using Talon
 
 ### Interactive
@@ -265,8 +307,8 @@ talon version             version and build information
 ```
 
 Session flags: `--yes`, `--plan`, `--model`, `--privacy`, `--no-sandbox`,
-`--accept-terms`, `--audit-level`, `--non-interactive`, `--append-system`,
-`--no-index`, `--no-color`, `--debug`.
+`--accept-terms`, `--audit-level`, `--no-tui`, `--non-interactive`,
+`--append-system`, `--no-index`, `--no-color`, `--debug`.
 
 Global flags: `--cwd`, `--no-color`, `--debug`, `--verbose`, `--quiet`,
 `--log-file`, `--version`.
@@ -299,9 +341,10 @@ Global flags: `--cwd`, `--no-color`, `--debug`, `--verbose`, `--quiet`,
 | `/data [list\|clear <category>]` | inspect or delete stored data |
 | `/clear`, `/exit` | start over, leave |
 
-Editing keys: `Ctrl+C` interrupts the turn, `Ctrl+D` exits, `↑`/`↓` recall
-history, `Ctrl+R` searches it, `Tab` completes commands and paths, `Ctrl+A/E/K/U/W`
-edit the line, `Ctrl+L` clears the screen.
+With `--no-tui` the line editor is used instead, with these keys: `Ctrl+C`
+interrupts the turn, `Ctrl+D` exits, `↑`/`↓` recall history, `Ctrl+R` searches it,
+`Tab` completes commands and paths, `Ctrl+A/E/K/U/W` edit the line, `Ctrl+L`
+clears the screen.
 
 ---
 

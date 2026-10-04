@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/CRISTOP-bot/talon/internal/agent"
 	"github.com/CRISTOP-bot/talon/internal/config"
@@ -34,6 +35,7 @@ import (
 	"github.com/CRISTOP-bot/talon/internal/shell"
 	"github.com/CRISTOP-bot/talon/internal/term"
 	"github.com/CRISTOP-bot/talon/internal/tools"
+	tuiapp "github.com/CRISTOP-bot/talon/internal/tuiapp"
 	"github.com/CRISTOP-bot/talon/internal/ui"
 )
 
@@ -60,6 +62,8 @@ type Options struct {
 	PrivacyMode bool
 	// ConfirmNetwork is asked before contacting a host outside the allow list.
 	ConfirmNetwork func(host string) error
+	// NoTUI forces the line editor even on a terminal.
+	NoTUI bool
 	// SessionID correlates audit records for this run.
 	SessionID string
 	// InitialPrompt is executed before the loop starts.
@@ -112,6 +116,17 @@ type REPL struct {
 	plugins    []*plugin.Plugin
 	mcpServers []*mcp.Server
 
+	// tuiApp is the full-screen application when one is running.
+	tuiApp *tuiapp.App
+	// tuiOut receives what the shared printer would have written to the
+	// terminal, so command output becomes conversation text.
+	tuiOut *tuiWriter
+	// tuiErr receives the printer's error stream.
+	tuiErr *tuiWriter
+	// refreshCh asks the key loop to repaint.
+	refreshCh chan struct{}
+	// turns counts running turns so shutdown can wait for them.
+	turns sync.WaitGroup
 	// posture is the assembled security configuration for this run; every
 	// component below is wired through it.
 	posture *secure.Posture
@@ -380,14 +395,26 @@ func (r *REPL) AppendSystem(text string) {
 // Run executes the session.
 func (r *REPL) Run(ctx context.Context) error {
 	defer r.shutdown()
+
+	if r.opts.NonInteractive {
+		r.banner()
+		r.checkConsent()
+		if strings.TrimSpace(r.opts.InitialPrompt) != "" {
+			return r.turn(ctx, r.opts.InitialPrompt)
+		}
+		return errs.Usage("no prompt given; pass one as an argument or run talon interactively")
+	}
+
+	// The full-screen interface needs a real terminal on both ends. Anywhere else
+	// (pipes, CI, logs) the line editor is the correct behaviour, not a fallback.
+	if r.useTUI() {
+		return r.runTUI(ctx)
+	}
+
 	r.banner()
 	r.checkConsent()
-
 	if strings.TrimSpace(r.opts.InitialPrompt) != "" {
 		return r.turn(ctx, r.opts.InitialPrompt)
-	}
-	if r.opts.NonInteractive {
-		return errs.Usage("no prompt given; pass one as an argument or run talon interactively")
 	}
 
 	r.setupReadline()
@@ -470,8 +497,13 @@ func (r *REPL) reportTurnError(err error) {
 	}
 }
 
-// onEvent renders agent progress.
+// onEvent renders agent progress. In the full-screen interface the same events
+// become conversation blocks instead of terminal writes.
 func (r *REPL) onEvent(ev agent.Event) {
+	if r.tuiApp != nil {
+		r.onTUIEvent(ev)
+		return
+	}
 	switch ev.Kind {
 	case agent.EventTurnStart:
 		r.afterTool = false

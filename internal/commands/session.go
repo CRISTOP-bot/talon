@@ -37,6 +37,7 @@ type sessionFlags struct {
 	noSandbox  bool
 	accept     bool
 	auditLevel string
+	noTUI      bool
 }
 
 // parseSessionFlags parses the arguments that precede the prompt.
@@ -57,6 +58,7 @@ func parseSessionFlags(args []string) (*sessionFlags, []string, error) {
 	fs.BoolVar(&f.noSandbox, "no-sandbox", false, "run commands without kernel isolation (less safe)")
 	fs.BoolVar(&f.accept, "accept-terms", false, "record acceptance of the current Terms version")
 	fs.StringVar(&f.auditLevel, "audit-level", "", "audit detail: minimal, normal, verbose or off")
+	fs.BoolVar(&f.noTUI, "no-tui", false, "use the line editor instead of the full-screen interface")
 	if err := fs.Parse(args); err != nil {
 		return nil, nil, errs.Usage("%v", err)
 	}
@@ -178,6 +180,7 @@ func RunSession(a *cli.App, args []string) int {
 		AutoApprove:    f.yes,
 		InitialPrompt:  prompt,
 		SessionID:      sessionIDFor(root, prompt),
+		NoTUI:          f.noTUI,
 	})
 	if err != nil {
 		fmt.Fprintln(a.Stderr, "error: "+errs.User(err))

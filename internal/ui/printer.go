@@ -32,6 +32,15 @@ type Printer struct {
 }
 
 // NewPrinter builds a printer with the given theme.
+// SetOut redirects the printer. The full-screen interface uses it to send
+// command output into the conversation instead of the terminal.
+func (p *Printer) SetOut(out, errOut io.Writer) {
+	p.Out = out
+	if errOut != nil {
+		p.Err = errOut
+	}
+}
+
 func NewPrinter(out, errOut io.Writer, theme Theme) *Printer {
 	return &Printer{Out: out, Err: errOut, Theme: theme, Width: 100}
 }
