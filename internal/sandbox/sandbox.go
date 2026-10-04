@@ -216,6 +216,16 @@ func DefaultPolicy(workspace string, env []string) Policy {
 			roots = append(roots, d)
 		}
 	}
+	// Ordinary programs expect the standard devices to exist. Landlock cannot
+	// express a rule for a character device (the kernel rejects the rule), so
+	// these are only added when they are ordinary files. A sandbox that denies
+	// /dev/null breaks every `cmd > /dev/null`, which reads as a bug rather than
+	// a restriction; granting all of /dev instead would hand over /dev/shm.
+	for _, f := range []string{"/dev/null", "/dev/zero", "/dev/urandom", "/dev/random", "/dev/tty"} {
+		if isRegularFile(f) {
+			roots = append(roots, f)
+		}
+	}
 	return Policy{
 		ReadRoots:    roots,
 		WriteRoots:   []string{workspace},
@@ -229,6 +239,13 @@ func DefaultPolicy(workspace string, env []string) Policy {
 func isDir(path string) bool {
 	info, err := os.Stat(path)
 	return err == nil && info.IsDir()
+}
+
+// isRegularFile reports whether path is an ordinary file. Character devices are
+// excluded on purpose: see DefaultPolicy.
+func isRegularFile(path string) bool {
+	info, err := os.Stat(path)
+	return err == nil && info.Mode().IsRegular()
 }
 
 // Validate reports configuration mistakes before a sandbox is attempted.
@@ -292,4 +309,20 @@ func Command(policy Policy, name string, args []string) (*exec.Cmd, bool, error)
 	cmd.Dir = policy.WorkingDir
 	cmd.Env = policy.Env
 	return cmd, false, nil
+}
+
+// IsHelperInvocation reports whether argv is Talon re-executing itself to apply
+// a sandbox policy. Every binary that can run sandboxed commands must check this
+// before parsing flags: otherwise the confinement silently never happens and the
+// child fails on an unknown flag.
+func IsHelperInvocation(argv []string) bool {
+	for _, a := range argv {
+		if a == HelperFlag {
+			return true
+		}
+		if a == "--" {
+			return false
+		}
+	}
+	return false
 }

@@ -29,19 +29,21 @@ jobs:
       - name: Build binaries
         run: |
           version="${GITHUB_REF_NAME}"
-          for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do
-            os="${target%/*}"; arch="${target#*/}"
-            out="dist/talon-${version}-${os}-${arch}"
-            [ "$os" = "windows" ] && out="${out}.exe"
-            CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -trimpath \
-              -ldflags "-s -w -X github.com/CRISTOP-bot/talon/internal/app.Version=${version} \
-                        -X github.com/CRISTOP-bot/talon/internal/app.Commit=${GITHUB_SHA} \
-                        -X github.com/CRISTOP-bot/talon/internal/app.Date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-              -o "$out" ./cmd/talon
+          for cmd in talon talon-sandbox talon-mock-provider talon-mcp; do
+            for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do
+              os="${target%/*}"; arch="${target#*/}"
+              out="dist/${cmd}-${version}-${os}-${arch}"
+              [ "$os" = "windows" ] && out="${out}.exe"
+              CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -trimpath \
+                -ldflags "-s -w -X github.com/CRISTOP-bot/talon/internal/app.Version=${version} \
+                          -X github.com/CRISTOP-bot/talon/internal/app.Commit=${GITHUB_SHA} \
+                          -X github.com/CRISTOP-bot/talon/internal/app.Date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+                -o "$out" "./cmd/${cmd}"
+            done
           done
 
       - name: Checksums
-        run: cd dist && sha256sum talon-* > checksums.txt && cat checksums.txt
+        run: cd dist && sha256sum ./*-* > checksums.txt && cat checksums.txt
 
       - name: Debian package
         run: |
@@ -57,7 +59,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/talon-*
+            dist/*-*-*
             dist/talon_*.deb
           fail_on_unmatched_files: true
           body: |

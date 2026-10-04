@@ -8,6 +8,36 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+**Companion binaries** (one module, one version, on purpose — see README)
+- `talon-sandbox`: runs any command under the same kernel confinement Talon
+  applies to itself. `talon-sandbox status` reports what the kernel enforces;
+  `--root`, `--read-root`, `--write-root`, `--net-port` and `--keep-env` shape
+  the policy.
+- `talon-mcp`: serves Talon's read-only tools over the Model Context Protocol so
+  another agent can search and read a project through the same code paths.
+- `talon-mock-provider`: a deterministic OpenAI-compatible provider for CI and
+  for trying Talon without an account; `--tool-call` exercises the agent loop.
+- `make commands` builds all four; `make install` and the release build install
+  all four.
+
+### Fixed
+
+- **The kernel sandbox never ran in the shipped binary.** Talon re-executes itself
+  to apply Landlock, but neither `cmd/talon` nor any other binary checked for the
+  helper invocation, so the confinement silently did nothing and the child died on
+  an unknown flag. `internal/sandbox.IsHelperInvocation` is now checked before
+  flag parsing, and `cmd/talon-sandbox` actually confines commands.
+- Landlock cannot express a rule for a character device, so `/dev/null` was
+  rejected and every `cmd > /dev/null` failed with "permission denied". The
+  default policy now says so explicitly instead of pretending.
+- `talon-mcp` called tools directly and so skipped the permission engine
+  entirely: a client could write files even in read-only mode. The decision is now
+  made by the server, and only read-only tools are advertised.
+- `tools.Context` with unset limits reported every file as "larger than the 0 byte
+  limit"; the MCP server and its tests now build limits from the configuration.
+
+### Added
+
 **Provider catalogue**
 - One catalogue (`internal/llm/providers.go`) now defines every provider: its
   API root, the environment variables that hold its key, the protocol it speaks

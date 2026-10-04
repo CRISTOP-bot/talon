@@ -4,6 +4,11 @@
 
 APP      := talon
 PKG      := github.com/CRISTOP-bot/talon/cmd/talon
+# Companion binaries. They live in this repository on purpose: one module, one
+# version, one atomic release. Splitting them across repositories would break
+# `go install`, the installer and the update mechanism, and Go forbids importing
+# `internal/` across module boundaries.
+COMMANDS := talon talon-sandbox talon-mock-provider talon-mcp
 BIN_DIR  := bin
 VERSION  ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo 0.1.0)
 # Package versions must start with a digit, while git tags conventionally start
@@ -30,9 +35,22 @@ build: ## Build ./bin/talon with version information
 	@echo "built $(BIN_DIR)/$(APP) $(VERSION)"
 
 .PHONY: install
-install: ## Install talon into $(GOPATH)/bin
+install: ## Install talon (and the companion binaries) into $(GOPATH)/bin
 	go install $(GOFLAGS) -ldflags '$(LDFLAGS)' $(PKG)
-	@echo "installed $$(go env GOPATH)/bin/$(APP)"
+	@for c in $(COMMANDS); do \
+		go install $(GOFLAGS) -ldflags '$(LDFLAGS)' github.com/CRISTOP-bot/talon/cmd/$$c || exit 1; \
+	done
+	@echo "installed $$(go env GOPATH)/bin: $(COMMANDS)"
+
+.PHONY: commands
+commands: ## Build every companion binary into ./bin
+	@mkdir -p $(BIN_DIR)
+	@for c in $(COMMANDS); do \
+		echo "  $$c"; \
+		go build $(GOFLAGS) -ldflags '$(LDFLAGS)' -o $(BIN_DIR)/$$c \
+			github.com/CRISTOP-bot/talon/cmd/$$c || exit 1; \
+	done
+	@echo "built $(COMMANDS)"
 
 .PHONY: run
 run: build ## Run from source: make run ARGS="--help"
@@ -74,14 +92,17 @@ tidy: ## Tidy go.mod (there are no third-party dependencies)
 	go mod tidy
 
 .PHONY: cross
-cross: ## Build for linux, darwin and windows on amd64 and arm64
+cross: ## Build every command for linux, darwin and windows on amd64 and arm64
 	@mkdir -p dist
-	@for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do \
-		os=$${target%/*}; arch=$${target#*/}; \
-		out=dist/$(APP)-$(VERSION)-$$os-$$arch; \
-		if [ "$$os" = "windows" ]; then out=$$out.exe; fi; \
-		echo "  $$os/$$arch"; \
-		GOOS=$$os GOARCH=$$arch go build $(GOFLAGS) -ldflags '$(LDFLAGS)' -o $$out $(PKG) || exit 1; \
+	@for cmd in $(COMMANDS); do \
+		for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do \
+			os=$${target%/*}; arch=$${target#*/}; \
+			out=dist/$$cmd-$(VERSION)-$$os-$$arch; \
+			if [ "$$os" = "windows" ]; then out=$$out.exe; fi; \
+			echo "  $$cmd $$os/$$arch"; \
+			GOOS=$$os GOARCH=$$arch go build $(GOFLAGS) -ldflags '$(LDFLAGS)' -o $$out \
+				github.com/CRISTOP-bot/talon/cmd/$$cmd || exit 1; \
+		done; \
 	done
 	@echo "artifacts in dist/"
 

@@ -312,6 +312,76 @@ talon --non-interactive "list every TODO with a file and line number" < /dev/nul
 
 ---
 
+## The binaries
+
+This repository builds four commands. They share one module and one version on
+purpose: Go forbids importing `internal/` across module boundaries, so splitting
+them across repositories would break `go install`, the installer and
+`talon update`.
+
+| Command | What it is |
+| --- | --- |
+| `talon` | the agentic coding CLI |
+| `talon-sandbox` | runs any command under the same kernel sandbox Talon applies to itself |
+| `talon-mcp` | serves Talon's read-only project tools over the Model Context Protocol |
+| `talon-mock-provider` | a deterministic provider, for CI and for trying Talon without an account |
+
+```bash
+make commands       # build all four into ./bin
+make install        # go install all four
+```
+
+### talon-sandbox
+
+Try the confinement by hand, or use it in CI to run untrusted steps:
+
+```bash
+talon-sandbox -- make test
+talon-sandbox --root . --net-port 443 -- git fetch
+talon-sandbox status                       # what this kernel can enforce
+```
+
+Reads outside the roots and writes outside the workspace are refused by the
+kernel. Credentials are stripped from the child environment unless you pass
+`--keep-env`. Landlock cannot express a rule for a character device, so
+`/dev/null` is not granted and `cmd > /dev/null` fails; add `--write-root /dev`
+when a build needs it.
+
+### talon-mcp
+
+Point another agent at a project through Talon's tools. Only read-only tools are
+exposed; a write or execute request is refused even if a client names the tool
+directly.
+
+```json
+{
+  "mcpServers": {
+    "talon": {
+      "command": "talon-mcp",
+      "args": ["--cwd", "/path/to/project"]
+    }
+  }
+}
+```
+
+### talon-mock-provider
+
+An OpenAI-compatible server that answers deterministically, so Talon can be
+exercised end to end with no account and no network:
+
+```bash
+talon-mock-provider --port 8080 &
+talon config set model.provider custom
+talon config set model.base_url http://127.0.0.1:8080/v1
+talon config set model.api_key anything
+# a custom endpoint on loopback over http needs this, deliberately:
+talon config set security.allow_http true
+talon config set security.allow_loopback true
+```
+
+`--tool-call read_file` makes it answer with a tool call, which is how the agent
+loop gets tested.
+
 ## Commands
 
 ```
