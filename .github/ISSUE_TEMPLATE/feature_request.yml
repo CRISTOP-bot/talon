@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest a capability or improvement for talon
+labels: ["enhancement", "needs triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the limitation rather than the solution you have in mind.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which area?
+      options: [Sensitive-data gates, Network policy, Kernel sandbox, Audit log, Privacy mode, CLI, Docs, Other]
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
