@@ -190,15 +190,44 @@ explicitly pass `--show-secrets`.
 
 ## Providers
 
-| Provider | `model.provider` | Default base URL | Key |
+Every provider below works out of the box: Talon reads the key from the variable
+named in the table, and its host is already in the network allowlist, so you do
+not have to configure anything else.
+
+| Provider | `model.provider` | API root | Key variable |
 |---|---|---|---|
-| OpenAI | `openai` | `https://api.openai.com/v1` | `AI_API_KEY` |
-| Anthropic | `anthropic` | `https://api.anthropic.com/v1` | `AI_API_KEY` (or `ANTHROPIC_API_KEY`) |
-| Google Gemini | `gemini` | `https://generativelanguage.googleapis.com/v1beta` | `AI_API_KEY` (or `GEMINI_API_KEY`) |
-| OpenRouter | `openrouter` | `https://openrouter.ai/api/v1` | `AI_API_KEY` |
+| OpenAI | `openai` | `https://api.openai.com/v1` | `OPENAI_API_KEY` |
+| Anthropic | `anthropic` | `https://api.anthropic.com/v1` | `ANTHROPIC_API_KEY` |
+| Google Gemini | `gemini` | `https://generativelanguage.googleapis.com/v1beta` | `GEMINI_API_KEY` |
+| OpenRouter | `openrouter` | `https://openrouter.ai/api/v1` | `OPENROUTER_API_KEY` |
+| NVIDIA | `nvidia` | `https://integrate.api.nvidia.com/v1` | `NVIDIA_API_KEY` |
+| Groq | `groq` | `https://api.groq.com/openai/v1` | `GROQ_API_KEY` |
+| Together | `together` | `https://api.together.xyz/v1` | `TOGETHER_API_KEY` |
+| DeepSeek | `deepseek` | `https://api.deepseek.com/v1` | `DEEPSEEK_API_KEY` |
+| Mistral | `mistral` | `https://api.mistral.ai/v1` | `MISTRAL_API_KEY` |
+| Fireworks | `fireworks` | `https://api.fireworks.ai/inference/v1` | `FIREWORKS_API_KEY` |
+| Cerebras | `cerebras` | `https://api.cerebras.ai/v1` | `CEREBRAS_API_KEY` |
+| xAI | `xai` | `https://api.x.ai/v1` | `XAI_API_KEY` |
+| Perplexity | `perplexity` | `https://api.perplexity.ai` | `PERPLEXITY_API_KEY` |
+| SiliconFlow | `siliconflow` | `https://api.siliconflow.cn/v1` | `SILICONFLOW_API_KEY` |
+| Hugging Face | `huggingface` | `https://router.huggingface.co/v1` | `HF_TOKEN` |
+| GitHub Models | `github` | `https://models.github.ai/inference` | `GITHUB_TOKEN` |
 | Ollama (local) | `ollama` | `http://localhost:11434/v1` | none |
 | llama.cpp (local) | `llamacpp` | `http://localhost:8080/v1` | none |
+| LM Studio (local) | `lmstudio` | `http://localhost:1234/v1` | none |
 | Any OpenAI-compatible server | `custom` | your `model.base_url` | optional |
+
+`AI_API_KEY` works as a fallback for any of them, and `model.api_key_env`
+overrides the variable when you need a different one.
+
+Switching provider takes one command and no other change:
+
+```bash
+talon config set model.provider nvidia
+talon config set model.name qwen/qwen3-coder-480b-a35b-instruct
+export NVIDIA_API_KEY=nvapi-...
+talon doctor        # tells you exactly which variable it is reading
+```
 
 ```bash
 # Local models, no key required

@@ -8,6 +8,23 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+**Provider catalogue**
+- One catalogue (`internal/llm/providers.go`) now defines every provider: its
+  API root, the environment variables that hold its key, the protocol it speaks
+  and the models it offers. Adding a provider there is enough to make it
+  selectable, allowlisted by the network policy, resolvable for a key and
+  listed by `talon models`.
+- New providers: NVIDIA, Groq, Together, DeepSeek, Mistral, Fireworks, Cerebras,
+  xAI, Perplexity, SiliconFlow, Hugging Face, GitHub Models and LM Studio,
+  alongside the existing OpenAI, Anthropic, Gemini, OpenRouter, Ollama and
+  llama.cpp.
+- `talon doctor` now names the variable it actually reads for the configured
+  provider, so the fix line is copy-pasteable.
+- `model.provider` is validated against the catalogue, with a hint to run
+  `talon models`.
+
+### Added
+
 **Full-screen interface (opencode-style)**
 - `internal/tui`: a screen buffer with a difference renderer, the alternate
   screen, resize handling and a palette; only changed cells are written, so

@@ -12,25 +12,26 @@ import (
 // Factory builds a provider from options.
 type Factory func(Options) Provider
 
-// DefaultBaseURLs maps provider names to their API roots. Users can override
-// any of them with model.base_url, which is how self-hosted servers are used.
-var DefaultBaseURLs = map[string]string{
-	"openai":     "https://api.openai.com/v1",
-	"anthropic":  "https://api.anthropic.com/v1",
-	"gemini":     "https://generativelanguage.googleapis.com/v1beta",
-	"openrouter": "https://openrouter.ai/api/v1",
-	"ollama":     "http://localhost:11434/v1",
-	"llamacpp":   "http://localhost:8080/v1",
-}
+// DefaultBaseURLs maps provider names to their API roots. It is generated from
+// the catalogue in providers.go, so adding a provider there is enough.
+var DefaultBaseURLs = func() map[string]string {
+	out := make(map[string]string, len(providerSpecs))
+	for name, spec := range providerSpecs {
+		out[name] = spec.BaseURL
+	}
+	return out
+}()
 
 // IsOpenAICompatible reports whether a provider speaks the OpenAI protocol,
 // which decides how requests are encoded.
 func IsOpenAICompatible(provider string) bool {
-	switch provider {
-	case "openai", "openrouter", "ollama", "llamacpp", "custom", "mock":
+	spec, ok := Spec(provider)
+	if !ok {
+		// An unknown name is assumed to be an OpenAI-compatible endpoint, which
+		// is the common case for self-hosted servers.
 		return true
 	}
-	return false
+	return spec.Protocol == ProtocolOpenAI
 }
 
 // openAICompatible adapts any OpenAI-protocol provider under a custom name so
@@ -67,9 +68,21 @@ func New(provider string, opts Options) (Provider, error) {
 		return NewGemini(opts), nil
 	case "mock":
 		return NewMock(opts), nil
-	case "openai", "openrouter", "ollama", "llamacpp", "custom", "":
+	case "":
 		return NewOpenAI(opts), nil
 	default:
+		// Every catalogue provider that is not Anthropic or Gemini speaks the
+		// OpenAI protocol, which covers OpenRouter, NVIDIA, Groq and the rest.
+		if spec, ok := Spec(provider); ok {
+			switch spec.Protocol {
+			case ProtocolAnthropic:
+				return NewAnthropic(opts), nil
+			case ProtocolGemini:
+				return NewGemini(opts), nil
+			case ProtocolOpenAI:
+				return NewOpenAI(opts), nil
+			}
+		}
 		e := errs.Config("llm", "unknown provider %q", provider)
 		e.Hint = "run `talon models` to see the supported providers"
 		return nil, e
@@ -78,8 +91,10 @@ func New(provider string, opts Options) (Provider, error) {
 
 // Providers lists the supported provider identifiers.
 func Providers() []string {
-	out := append([]string(nil), keys(DefaultBaseURLs)...)
-	out = append(out, "custom", "mock")
+	out := make([]string, 0, len(providerSpecs))
+	for name := range providerSpecs {
+		out = append(out, name)
+	}
 	sort.Strings(out)
 	return out
 }
@@ -95,6 +110,11 @@ func keys(m map[string]string) []string {
 // Catalog returns the default model list for a provider without making a
 // network call. It is what `talon models` shows offline.
 func Catalog(provider string) []ModelInfo {
+	if spec, ok := Spec(provider); ok && len(spec.Models) > 0 {
+		models := append([]ModelInfo(nil), spec.Models...)
+		SortModels(models)
+		return models
+	}
 	models := DefaultModelsFor(provider)
 	SortModels(models)
 	return models
@@ -102,8 +122,12 @@ func Catalog(provider string) []ModelInfo {
 
 // DescribeProvider returns a one-line description used by `talon doctor`.
 func DescribeProvider(provider string) string {
-	base, ok := DefaultBaseURLs[provider]
+	spec, ok := Spec(provider)
 	if !ok {
+		return fmt.Sprintf("%s — (configured base_url)", provider)
+	}
+	base := spec.BaseURL
+	if base == "" {
 		base = "(configured base_url)"
 	}
 	return fmt.Sprintf("%s — %s", provider, base)
@@ -111,11 +135,8 @@ func DescribeProvider(provider string) string {
 
 // IsLocalProvider reports whether a provider normally runs on this machine.
 func IsLocalProvider(provider string) bool {
-	switch provider {
-	case "ollama", "llamacpp", "mock":
-		return true
-	}
-	return false
+	spec, ok := Spec(provider)
+	return ok && spec.Local
 }
 
 // needsKey reports whether a provider requires an API key.

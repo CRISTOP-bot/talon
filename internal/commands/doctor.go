@@ -3,6 +3,7 @@ package commands
 import (
 	"flag"
 	"fmt"
+	"github.com/CRISTOP-bot/talon/internal/llm"
 	"os"
 	"os/exec"
 	"strings"
@@ -97,8 +98,9 @@ func gatherChecks(cfg *config.Config) []check {
 	// API key / provider.
 	provider := cfg.Model.Provider
 	key := cfg.APIKeyValue()
-	switch provider {
-	case "ollama", "llamacpp":
+	spec, known := llm.Spec(provider)
+	switch {
+	case known && spec.Local:
 		if cfg.Model.Name == "" {
 			out = append(out, check{
 				name: "provider", status: checkWarn,
@@ -109,7 +111,7 @@ func gatherChecks(cfg *config.Config) []check {
 			out = append(out, check{name: "provider", status: checkOK,
 				detail: fmt.Sprintf("%s/%s (local)", provider, cfg.Model.Name)})
 		}
-	case "custom":
+	case provider == "custom":
 		if cfg.Model.BaseURL == "" {
 			out = append(out, check{
 				name: "provider", status: checkWarn,
@@ -125,15 +127,18 @@ func gatherChecks(cfg *config.Config) []check {
 			})
 		}
 	default:
+		// Report the variable that is actually consulted for this provider, so
+		// the fix line is copy-pasteable.
+		vars := llm.KeyEnvFor(provider)
 		if key == "" {
 			out = append(out, check{
 				name: "api key", status: checkWarn,
-				detail: fmt.Sprintf("no key found in $%s", cfg.Model.APIKeyEnv),
-				fix:    "export " + cfg.Model.APIKeyEnv + "=... or run `talon init`",
+				detail: fmt.Sprintf("no key found in %s", dollarList(vars)),
+				fix:    "export " + vars[0] + "=... or run `talon init`",
 			})
 		} else {
 			out = append(out, check{name: "api key", status: checkOK,
-				detail: fmt.Sprintf("present via $%s", cfg.Model.APIKeyEnv)})
+				detail: fmt.Sprintf("present via %s", dollarList(vars))})
 		}
 		out = append(out, check{name: "model", status: checkOK,
 			detail: fmt.Sprintf("%s/%s", provider, orDash(cfg.Model.Name))})
@@ -219,4 +224,13 @@ func writable(dir string) error {
 		return errs.Permission("doctor", "cannot clean up %s: %v", name, err)
 	}
 	return nil
+}
+
+// dollarList renders environment variable names for a message.
+func dollarList(names []string) string {
+	out := make([]string, 0, len(names))
+	for _, n := range names {
+		out = append(out, "$"+n)
+	}
+	return strings.Join(out, " or ")
 }

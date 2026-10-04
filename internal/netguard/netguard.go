@@ -10,6 +10,7 @@ package netguard
 import (
 	"context"
 	"fmt"
+	"github.com/CRISTOP-bot/talon/internal/llm"
 	"net"
 	"net/http"
 	"net/url"
@@ -357,19 +358,21 @@ func ProviderHosts(provider, baseURL string) []string {
 			hosts = append(hosts, u.Hostname())
 		}
 	}
-	switch provider {
-	case "openai":
-		hosts = append(hosts, "api.openai.com", "models.dev")
-	case "anthropic":
-		hosts = append(hosts, "api.anthropic.com")
-	case "gemini":
-		hosts = append(hosts, "generativelanguage.googleapis.com")
-	case "openrouter":
-		hosts = append(hosts, "openrouter.ai")
-	case "ollama":
-		hosts = append(hosts, "localhost", "127.0.0.1", "::1", "host.docker.internal")
-	case "llamacpp":
+	if spec, ok := llm.Spec(provider); ok && spec.BaseURL != "" {
+		if u, err := url.Parse(spec.BaseURL); err == nil && u.Hostname() != "" {
+			hosts = append(hosts, u.Hostname())
+		}
+	}
+	// A few providers need more than their API root, and a local one needs every
+	// name it answers to.
+	if spec, ok := llm.Spec(provider); ok && spec.Local {
 		hosts = append(hosts, "localhost", "127.0.0.1", "::1")
+		if provider == "ollama" {
+			hosts = append(hosts, "host.docker.internal")
+		}
+	}
+	if provider == "openai" {
+		hosts = append(hosts, "models.dev")
 	}
 	return hosts
 }
@@ -377,7 +380,8 @@ func ProviderHosts(provider, baseURL string) []string {
 // IsLocalProviderHost reports whether a host belongs to a local model server,
 // for which the private/loopback rules must be relaxed.
 func IsLocalProviderHost(provider string) bool {
-	return provider == "ollama" || provider == "llamacpp"
+	spec, ok := llm.Spec(provider)
+	return ok && spec.Local
 }
 
 // HTTPClient builds an http.Client that enforces the policy.

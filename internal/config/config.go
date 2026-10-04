@@ -11,6 +11,7 @@
 package config
 
 import (
+	"github.com/CRISTOP-bot/talon/internal/llm"
 	"os"
 	"path/filepath"
 	"sort"
@@ -692,6 +693,12 @@ func (c *Config) validate() error {
 	if c.Model.TimeoutSeconds < 1 {
 		return errs.Config("config", "model.timeout_seconds must be at least 1")
 	}
+	if c.Model.Provider != "" {
+		if _, known := llm.Spec(c.Model.Provider); !known {
+			return withHint(errs.Config("config", "model.provider %q is not a known provider", c.Model.Provider),
+				"run `talon models` to list the supported providers")
+		}
+	}
 	switch c.Security.NetworkMode {
 	case "allowlist", "ask", "off":
 	default:
@@ -773,18 +780,16 @@ func (c *Config) APIKeyValue() string {
 	if v := os.Getenv(name); v != "" {
 		return v
 	}
-	// Per-provider fallbacks keep the common setup short.
-	switch c.Model.Provider {
-	case "anthropic":
-		if v := os.Getenv("ANTHROPIC_API_KEY"); v != "" {
-			return v
-		}
-	case "gemini":
-		if v := os.Getenv("GEMINI_API_KEY"); v != "" {
-			return v
-		}
-	case "ollama", "llamacpp":
+	// Local providers need nothing; asking for a key would be noise.
+	if spec, ok := llm.Spec(c.Model.Provider); ok && spec.Local {
 		return ""
+	}
+	// Each provider has its own environment variable, so switching from
+	// OpenRouter to NVIDIA does not mean rewriting the config.
+	for _, name := range llm.KeyEnvFor(c.Model.Provider) {
+		if v := os.Getenv(name); v != "" {
+			return v
+		}
 	}
 	if v := os.Getenv("OPENAI_API_KEY"); v != "" {
 		return v
