@@ -206,3 +206,52 @@ func TestDownloadFailsOnHTTPError(t *testing.T) {
 		t.Fatal("expected an error")
 	}
 }
+
+// TestAssetForIgnoresCompanionBinaries is the regression test for an update that
+// installed talon-mcp in place of talon: every release ships several binaries and
+// a substring match on "linux" and "amd64" cannot tell them apart.
+func TestAssetForIgnoresCompanionBinaries(t *testing.T) {
+	rel := &Release{
+		TagName: "v9.9.9",
+		Assets: []Asset{
+			{Name: "talon-mcp-v9.9.9-linux-amd64"},
+			{Name: "talon-mock-provider-v9.9.9-linux-amd64"},
+			{Name: "talon-sandbox-v9.9.9-linux-amd64"},
+			{Name: "talon-v9.9.9-linux-amd64"},
+			{Name: "checksums.txt"},
+		},
+	}
+	u := &Updater{}
+	got, ok := u.AssetFor(rel)
+	if !ok {
+		t.Fatal("no asset was chosen for this platform")
+	}
+	if got.Name != AssetName("talon", "v9.9.9", "linux", "amd64") {
+		t.Fatalf("chose %q, want the talon binary", got.Name)
+	}
+}
+
+func TestAssetNameMatchesTheReleaseNaming(t *testing.T) {
+	if got := AssetName("talon", "v1.0.0", "linux", "amd64"); got != "talon-v1.0.0-linux-amd64" {
+		t.Errorf("AssetName = %q", got)
+	}
+	if got := AssetName("talon", "v1.0.0", "windows", "arm64"); got != "talon-v1.0.0-windows-arm64.exe" {
+		t.Errorf("AssetName = %q", got)
+	}
+}
+
+// TestAssetForRefusesToGuess proves that an ambiguous release is refused rather
+// than resolved to an arbitrary binary.
+func TestAssetForRefusesToGuess(t *testing.T) {
+	rel := &Release{
+		TagName: "v9.9.9",
+		Assets: []Asset{
+			{Name: "talon-linux-amd64"},
+			{Name: "talon-mcp-linux-amd64"},
+		},
+	}
+	u := &Updater{}
+	if _, ok := u.AssetFor(rel); ok {
+		t.Fatal("an ambiguous release must not resolve to an arbitrary asset")
+	}
+}

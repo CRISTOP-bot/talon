@@ -98,10 +98,26 @@ func (u *Updater) http() *http.Client {
 	return http.DefaultClient
 }
 
-// AssetFor picks the asset matching the running platform.
+// AssetFor picks the asset of *this* program for the running platform.
+//
+// Matching on the operating system alone is not enough now that a release ships
+// several binaries: "talon-mcp-v0.4.1-linux-amd64" contains both "linux" and
+// "amd64", so a substring match happily installs the MCP server in place of the
+// CLI. The name is therefore required to be exactly
+// "<app>-<tag>-<os>-<arch>", with the tag taken from the release.
 func (u *Updater) AssetFor(rel *Release) (Asset, bool) {
 	goos := runtime.GOOS
 	goarch := runtime.GOARCH
+	wanted := AssetName(appName, rel.TagName, goos, goarch)
+	for _, a := range rel.Assets {
+		if a.Name == wanted || a.Name == wanted+".exe" {
+			return a, true
+		}
+	}
+	// A release published without a tag in the asset name still has to work, but
+	// only when there is exactly one candidate, so a guess can never install the
+	// wrong program.
+	var candidates []Asset
 	for _, a := range rel.Assets {
 		name := strings.ToLower(a.Name)
 		if !strings.Contains(name, goos) || !strings.Contains(name, goarch) {
@@ -111,9 +127,28 @@ func (u *Updater) AssetFor(rel *Release) (Asset, bool) {
 			strings.HasSuffix(name, ".asc") || strings.Contains(name, "checksum") {
 			continue
 		}
-		return a, true
+		if !strings.HasPrefix(name, appName+"-") {
+			continue
+		}
+		candidates = append(candidates, a)
+	}
+	if len(candidates) == 1 {
+		return candidates[0], true
 	}
 	return Asset{}, false
+}
+
+// appName is the program this updater belongs to. A release also carries the
+// companion binaries, so the name has to be matched exactly.
+const appName = "talon"
+
+// AssetName builds the release asset name for a program and platform.
+func AssetName(app, tag, goos, goarch string) string {
+	name := fmt.Sprintf("%s-%s-%s-%s", app, tag, goos, goarch)
+	if goos == "windows" {
+		name += ".exe"
+	}
+	return name
 }
 
 // Checksums picks the checksum file of a release, if one was published.

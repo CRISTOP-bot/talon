@@ -22,6 +22,11 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- **`talon update` could install the wrong program.** With several binaries per
+  release, the asset was chosen by matching "linux" and "amd64" as substrings, so
+  `talon-mcp-v0.4.1-linux-amd64` matched first and replaced the CLI with the MCP
+  server. The name is now matched exactly as `<program>-<tag>-<os>-<arch>`, and an
+  ambiguous release is refused instead of guessed.
 - **Requests to a real provider carried no model at all.** The agent builds a
   neutral request and nothing filled the model in from the configuration, so
   every hosted API answered `HTTP 400 No models provided`. The offline provider
