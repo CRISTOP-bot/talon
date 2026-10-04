@@ -22,6 +22,15 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- **Requests to a real provider carried no model at all.** The agent builds a
+  neutral request and nothing filled the model in from the configuration, so
+  every hosted API answered `HTTP 400 No models provided`. The offline provider
+  ignores the field, which is why the test suite never caught it: Talon had not
+  been exercised against a real API until now. The configured model is now
+  applied by the provider factory, with tests covering both the value that reaches
+  the wire and the JSON body itself.
+- A nil event callback crashed the streaming providers; they now drop events
+  instead of taking the process down.
 - **The kernel sandbox never ran in the shipped binary.** Talon re-executes itself
   to apply Landlock, but neither `cmd/talon` nor any other binary checked for the
   helper invocation, so the confinement silently did nothing and the child died on

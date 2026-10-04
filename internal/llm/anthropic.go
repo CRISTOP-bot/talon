@@ -91,6 +91,10 @@ func (p *Anthropic) ListModels(ctx context.Context) ([]ModelInfo, error) {
 
 // Stream implements Provider.
 func (p *Anthropic) Stream(ctx context.Context, req Request, onEvent func(StreamEvent) error) error {
+	// A nil callback must not crash the caller; see the same guard in openai.go.
+	if onEvent == nil {
+		onEvent = func(StreamEvent) error { return nil }
+	}
 	if req.MaxTokens <= 0 {
 		req.MaxTokens = p.opts.MaxOutputTokens
 	}

@@ -170,6 +170,11 @@ type chatStreamChunk struct {
 
 // Stream implements Provider.
 func (p *OpenAI) Stream(ctx context.Context, req Request, onEvent func(StreamEvent) error) error {
+	// A nil callback is a programming mistake elsewhere, but crashing the whole
+	// program over it is worse than dropping the events.
+	if onEvent == nil {
+		onEvent = func(StreamEvent) error { return nil }
+	}
 	body := buildChatRequest(req, req.Tools, true)
 	resp, err := p.client.openStream(ctx, p.endpoint("chat/completions"), body)
 	if err != nil {

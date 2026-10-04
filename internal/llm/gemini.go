@@ -119,6 +119,10 @@ func contains(list []string, want string) bool {
 
 // Stream implements Provider.
 func (p *Gemini) Stream(ctx context.Context, req Request, onEvent func(StreamEvent) error) error {
+	// A nil callback must not crash the caller; see the same guard in openai.go.
+	if onEvent == nil {
+		onEvent = func(StreamEvent) error { return nil }
+	}
 	body := geminiRequest{}
 	if req.System != "" {
 		body.SystemInstruction = &geminiContent{Parts: []geminiPart{{Text: req.System}}}

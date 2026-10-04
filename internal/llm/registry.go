@@ -61,6 +61,15 @@ func New(provider string, opts Options) (Provider, error) {
 	if opts.BaseURL == "" {
 		opts.BaseURL = DefaultBaseURLs[provider]
 	}
+	p, err := build(provider, opts)
+	if err != nil {
+		return nil, err
+	}
+	// The configured model is applied here so no caller can forget it.
+	return WithDefaultModel(p, opts.Model), nil
+}
+
+func build(provider string, opts Options) (Provider, error) {
 	switch provider {
 	case "anthropic":
 		return NewAnthropic(opts), nil
