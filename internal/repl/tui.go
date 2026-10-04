@@ -6,10 +6,8 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/signal"
 	"sort"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/CRISTOP-bot/talon/internal/agent"
@@ -109,17 +107,11 @@ func (r *REPL) runTUI(ctx context.Context) error {
 	r.tuiErr = newTUIWriter(application, r.requestRefresh, roleNotice)
 	r.pr.SetOut(r.tuiOut, r.tuiErr)
 
-	resize := make(chan os.Signal, 1)
-	signal.Notify(resize, syscall.SIGWINCH)
-	defer signal.Stop(resize)
-	go func() {
-		for range resize {
-			if w, h, err := term.Size(r.opts.Stdin); err == nil {
-				screen.SetSize(tui.Size{Width: w, Height: h})
-				application.Render()
-			}
-		}
-	}()
+	stopResize := watchResize(r.opts.Stdin, func(w, h int) {
+		screen.SetSize(tui.Size{Width: w, Height: h})
+		application.Render()
+	})
+	defer stopResize()
 
 	application.Render()
 
