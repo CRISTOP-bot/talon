@@ -30,6 +30,9 @@ All notable changes to this project are documented here. The format follows
 - Landlock cannot express a rule for a character device, so `/dev/null` was
   rejected and every `cmd > /dev/null` failed with "permission denied". The
   default policy now says so explicitly instead of pretending.
+- The installer could not match a published checksum whose name column carried a
+  `./` prefix or a `*` marker, which is how `sha256sum dist/*` writes it; it now
+  normalises the name before comparing.
 - `talon-mcp` called tools directly and so skipped the permission engine
   entirely: a client could write files even in read-only mode. The decision is now
   made by the server, and only read-only tools are advertised.

@@ -282,7 +282,16 @@ main() {
         log "checksum verification skipped (TALON_NOCHECK=1)"
     else
         if fetch_to "https://github.com/$REPO/releases/download/$tag/checksums.txt" "$tmp/checksums.txt"; then
-            expected=$(awk -v name="$asset_name" '$2 == name || $2 == "*"name {print $1}' "$tmp/checksums.txt" | head -n1)
+            # The name column may carry a path prefix ("./talon-…") or a binary
+            # marker ("*talon-…"), depending on how the checksum file was written.
+            expected=$(awk -v name="$asset_name" '
+                {
+                    file = $2
+                    sub(/^\*?/, "", file)
+                    n = split(file, parts, "/")
+                    file = parts[n]
+                    if (file == name) { print $1; exit }
+                }' "$tmp/checksums.txt")
             if [ -z "$expected" ]; then
                 fail "no checksum published for $asset_name; refusing to install"
             fi
